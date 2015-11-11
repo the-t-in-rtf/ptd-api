@@ -1,0 +1,25 @@
+{
+    "type":        "object",
+    "id":          "record-query.json",
+    "title":       "Record query schema",
+    "description": "A schema used to validate incoming record browsing query parameters in JSON format.",
+
+    "definitions": {
+        "versions": {
+            "description": "The 'version' variable must be set to 'true' or 'false'.",
+            "enum": [true, false, "true", "false"]
+        },
+        "children": {
+            "description": "The 'children' variable must be set to 'true' or 'false'.",
+            "enum": ["true", "false", true, false]
+        }
+    },
+    "properties": {
+        "versions": {
+            "$ref": "record-query.json#/definitions/versions"
+        },
+        "children": {
+            "$ref": "record-query.json#/definitions/children"
+        }
+    }
+}

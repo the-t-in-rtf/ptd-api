@@ -1,0 +1,94 @@
+{
+    "type":        "object",
+    "id":          "records-query.json",
+    "title":       "Records query schema",
+    "description": "A schema used to validate incoming record browsing query parameters in JSON format.",
+
+    "definitions": {
+        "sort": {
+            "description": "The 'sort' variable must contain one or more strings.",
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array"}
+            ]
+        },
+        "offset": {
+            "description": "The 'offset' variable must be a number.",
+            "type":    "string",
+            "pattern": "[0-9]+"
+        },
+        "limit": {
+            "description": "The 'limit' variable must be a number.",
+            "type":    "string",
+            "pattern": "[0-9]+"
+        },
+        "children": {
+            "description": "The 'children' variable must either be 'true' or 'false'.",
+            "enum": ["true", "false", true, false]
+        },
+        "updated": {
+            "description": "The 'updated' field must be a valid date in ISO 9660 format.",
+            "type":   "string",
+            "format": "date"
+        },
+        "status": {
+            "description": "You must supply one or more valid statuses.",
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "record.json#/definitions/status"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$ref": "record.json#/definitions/status"
+                }
+            ]
+        },
+        "recordType": {
+            "description": "You must supply one or more valid record types.",
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "record.json#/definitions/type"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$ref": "record.json#/definitions/type"
+                }
+            ]
+        }
+    },
+    "properties": {
+        "sort": {
+            "$ref": "records-query.json#/definitions/sort"
+        },
+        "offset": {
+            "$ref": "records-query.json#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "records-query.json#/definitions/limit"
+        },
+        "children": {
+            "$ref": "records-query.json#/definitions/children"
+        },
+        "updated": {
+            "$ref": "records-query.json#/definitions/updated"
+        },
+        "status": {
+            "$ref": "records-query.json#/definitions/status"
+        },
+        "recordType": {
+            "$ref": "records-query.json#/definitions/recordType"
+        }
+    }
+}

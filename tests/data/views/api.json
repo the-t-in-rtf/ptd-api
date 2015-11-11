@@ -1,0 +1,18 @@
+{
+  "docs": [
+    {
+      "_id": "_design/api",
+      "validate_doc_update": "// Rules that control what record content can be stored in Couch for the Preference Terms Dictionary\nfunction (newDoc, oldDoc, userCtx) {\n    // The user has to be logged in to perform updates\n    if (!userCtx || userCtx.name === null) {\n        throw ({\"unauthorized\" : {\"summary\": \"You must be logged in to add or edit records.\"}});\n    }\n    else {\n        // We only allow couch admins to perform actual deletes\n        if (newDoc._deleted === true && (!userCtx.roles || userCtx.roles.indexOf(\"_admin\") === -1)) {\n            throw ({\"unauthorized\": {\"summary\" : \"Only admins are allowed to directly remove records.\"}});\n        }\n    }\n}",
+      "views": {
+        "terms": {"map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() === 'term') {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"},
+        "transforms": {"map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && (doc.type.toLowerCase() === 'transform')) {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"},
+        "entries": {"map": "function(doc) {\n    if (doc) {\n        emit(doc.uniqueId, doc);\n    }\n}"},
+        "conditions": {"map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() === \"condition\") {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"},
+        "children": {"map": "function(doc) {\n    if (doc && doc.type && (doc.type.toLowerCase() === \"alias\" || doc.type.toLowerCase === \"transform\" || doc.type.toLowerCase === \"translation\")) {\n        var key = doc.aliasOf;\n        if (doc.type.toLowerCase === \"translation\") {\n            key = doc.translationOf;\n        }\n        emit(key, doc);\n    }\n}"},
+        "aliases": {"map": "function(doc) {\n    if (doc && doc.type && doc.type.toLowerCase() === \"alias\") {\n        emit(doc.uniqueId, doc);\n    }\n}"}
+      }
+    }
+  ]
+}
+
+

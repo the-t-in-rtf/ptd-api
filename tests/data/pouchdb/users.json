@@ -1,0 +1,43 @@
+{
+  "docs": [
+    {
+      "_id": "org.couchdb.user:admin",
+      "password_scheme": "pbkdf2",
+      "iterations": 10,
+      "username": "admin",
+      "type": "user",
+      "name": "admin",
+      "email": "tony@raisingthefloor.org",
+      "roles": ["admin"],
+      "derived_key": "9ff4bc1c1846181d303971b08b65122a45174d04",
+      "salt": "2653c80aabd3889c3dfd6e198d3dca93",
+      "verified": true
+    },
+    {
+      "_id": "org.couchdb.user:nonadmin",
+      "password_scheme": "pbkdf2",
+      "iterations": 10,
+      "username": "nonadmin",
+      "type": "user",
+      "name": "nonadmin",
+      "email": "tony@raisingthefloor.org",
+      "roles": ["nonadmin"],
+      "derived_key": "9ff4bc1c1846181d303971b08b65122a45174d04",
+      "salt": "2653c80aabd3889c3dfd6e198d3dca93",
+      "verified": true
+    },
+    {
+      "_id": "org.couchdb.user:unverified",
+      "password_scheme": "pbkdf2",
+      "iterations": 10,
+      "username": "unverified",
+      "type": "user",
+      "name": "unverified",
+      "email": "tony@raisingthefloor.org",
+      "roles": ["admin"],
+      "derived_key": "9ff4bc1c1846181d303971b08b65122a45174d04",
+      "salt": "2653c80aabd3889c3dfd6e198d3dca93",
+      "verification_code": "0fac9d70-9b05-11e4-84d9-03e45bc462e2"
+    }
+  ]
+}

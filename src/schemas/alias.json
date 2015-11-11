@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "id":   "alias.json",
+
+    "allOf": [
+        {"$ref": "record.json"},
+        {
+            "required": ["aliasOf","termLabel"],
+            "properties": {
+                "aliasOf":      { "$ref": "record.json#/definitions/aliasOf" },
+                "termLabel":    { "$ref": "record.json#/definitions/termLabel" },
+                "ulUri":        { "$ref": "record.json#/definitions/ulUri" },
+                "uses":         { "$ref": "record.json#/definitions/uses" },
+                "defaultValue": { "$ref": "record.json#/definitions/defaultValue" }
+            }
+        }
+    ]
+}

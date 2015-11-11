@@ -1,0 +1,27 @@
+{
+  "name": "ptd-api",
+  "version": "0.0.0",
+  "homepage": "https://github.com/GPII/ptd-api",
+  "authors": [
+    "tony@raisingthefloor.org"
+  ],
+  "description": "Preference Terms Dictionary API (client side dependencies)",
+  "main": "tests/js/launch-test-harness.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "handlebars": "~1.3.0",
+    "github-markdown-css": "~0.1.0",
+    "foundation": "zurb/bower-foundation#~5.3.1",
+    "foundation-icons-sets": "*",
+    "pagedown": "~1.1.0",
+    "jquery-selectBox": "~1.2.0"
+  }
+}

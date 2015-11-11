@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "id": "condition.json",
+    "allOf": [
+        {"$ref": "record.json"},
+        {
+            "properties": {
+                "definition": {
+                    "$ref": "record.json#/definitions/definition"
+                }
+            },
+            "required": ["definition"]
+        }
+    ]
+}

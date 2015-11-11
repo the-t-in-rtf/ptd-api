@@ -1,0 +1,120 @@
+{
+    "type": "object",
+    "id": "search.json",
+
+    "definitions": {
+        "ok": {
+            "type": "boolean"
+        },
+        "total_rows": {
+            "type": "number"
+        },
+        "offset": {
+            "type": "number"
+        },
+        "limit": {
+            "type": "number"
+        },
+        "q" : {
+            "type": "string"
+        },
+        "updated": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "statuses": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "record.json#/definitions/status"
+                    }
+                ]
+            }
+        },
+        "recordTypes": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "record.json#/definitions/type"
+                    }
+                ]
+            }
+        },
+        "filters": {
+            "type": "object",
+            "properties": {
+                "updated": {
+                    "$ref": "search.json#/definitions/updated"
+                },
+                "statuses": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search.json#/definitions/statuses"}
+                    ]
+                },
+                "recordTypes": {
+                    "type": "array",
+                    "anyOf": [
+                        {"$ref": "search.json#/definitions/recordTypes"}
+                    ]
+                }
+            }
+        },
+        "records": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "term.json"
+                    },
+                    {
+                        "$ref": "alias.json"
+                    },
+                    {
+                        "$ref": "transform.json"
+                    },
+                    {
+                        "$ref": "translation.json"
+                    },
+                    {
+                        "$ref": "condition.json"
+                    }
+                ]
+            }
+        },
+        "retrievedAt": {
+            "type": "string",
+            "format": "date-time"
+        }
+    },
+
+    "properties": {
+        "ok": {
+            "$ref": "search.json#/definitions/ok"
+        },
+        "q": {
+            "$ref": "search.json#/definitions/q"
+        },
+        "total_rows": {
+            "$ref": "search.json#/definitions/total_rows"
+        },
+        "offset": {
+            "$ref": "search.json#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "search.json#/definitions/limit"
+        },
+        "filters": {
+            "$ref": "search.json#/definitions/filters"
+        },
+        "records": {
+            "$ref": "search.json#/definitions/records"
+        },
+        "retrievedAt": {
+            "$ref": "search.json#/definitions/retrievedAt"
+        }
+    },
+    "required": ["ok","q", "total_rows", "offset", "limit", "filters", "records", "retrievedAt"]
+}

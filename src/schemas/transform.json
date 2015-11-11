@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "id": "transform.json",
+    "allOf": [
+        {"$ref": "alias.json"},
+        {
+            "properties": {
+                "valueSpace": {
+                    "$ref": "record.json#/definitions/valueSpace"
+                }
+            },
+            "required": ["valueSpace"]
+        }
+    ]
+}

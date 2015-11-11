@@ -1,0 +1,18 @@
+{
+  "docs": [
+    {
+      "_id": "_design/lucene",
+      "fulltext": {
+        "by_content": {
+          "index": "function(doc) { \n    if (!doc._id.match(/^_design/)) {\n        var ret=new Document();\n\n        var defs = \"\";\n\n        // We have to store values we wish to use in field:value queries\n        // We also include them in the value of the defaults field (used when no qualifiers are added)\n        var keysToStore = [\"uniqueId\",\"aliasOf\",\"translationOf\"];\n        for (var i in keysToStore) {\n            var field = keysToStore[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"yes\"});\n                defs += \" \" + doc[field] + \" \";\n            }\n        }\n\n        // The type and status should not be included in the defs, but should be stored\n        var keysToStoreLowerCase = [\"type\", \"status\"];\n        for (var i in keysToStoreLowerCase) {\n            var field = keysToStoreLowerCase[i];\n            if (doc[field]) {\n                ret.add(doc[field].toLowerCase(),{\"field\":field, \"store\":\"yes\"});\n            }\n        }\n\n        var keysToIndex = [\"notes\",\"definition\",\"termLabel\",\"source\"];\n        for (var i in keysToIndex) {\n            var field = keysToIndex[i];\n            if (doc[field]) {\n                ret.add(doc[field],{\"field\":field, \"store\":\"no\"});\n                defs += \" \" + doc[field].toLowerCase() + \" \";\n            }\n        }\n\n        // All of the data is added to the default field so that unqualified searches match any data found in the record.\n        ret.add(defs,{\"field\":\"default\", \"store\": \"yes\"});\n\n        log.debug(\"indexed document '\" + doc.uniqueId + \"'...\");\n\n        return ret;\n    }\n    else {\n        log.debug(\"skipping indexing of design document '\" + doc._id + \"'...\");\n    }\n\n    return null;\n}",
+          "analyzer": "perfield:{default:\"porter\",uniqueId:\"keyword\",aliasOf:\"keyword\",translationOf:\"keyword\",status:\"keyword\"}",
+          "defaults": {
+            "field": "uniqueId",
+            "store": "yes"
+          }
+        }
+      }
+    }
+  ]
+}
+

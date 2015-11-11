@@ -1,0 +1,40 @@
+{
+    "type":        "object",
+    "id":          "search-query.json",
+    "title":       "Search query schema",
+    "description": "A schema used to validate incoming search query parameters in JSON format.",
+
+    "definitions": {
+        "q": {
+            "type": "string"
+        }
+    },
+
+    "properties": {
+        "sort": {
+            "$ref": "records-query.json#/definitions/sort"
+        },
+        "offset": {
+            "$ref": "records-query.json#/definitions/offset"
+        },
+        "limit": {
+            "$ref": "records-query.json#/definitions/limit"
+        },
+        "children": {
+            "$ref": "records-query.json#/definitions/children"
+        },
+        "updated": {
+            "$ref": "records-query.json#/definitions/updated"
+        },
+        "status": {
+            "$ref": "records-query.json#/definitions/status"
+        },
+        "recordType": {
+            "$ref": "records-query.json#/definitions/recordType"
+        },
+        "q": {
+            "$ref": "search-query.json#/definitions/q"
+        }
+    },
+    "required": [ "q" ]
+}
