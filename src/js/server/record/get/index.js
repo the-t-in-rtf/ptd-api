@@ -11,19 +11,18 @@ var request = require("request");
 
 fluid.registerNamespace("gpii.ptd.api.record.get.handler");
 
-gpii.ptd.api.record.get.handler.checkRequirements = function (that) {
+gpii.ptd.api.record.get.handler.handleRequest = function (that) {
     if (!that.options.urls.db) {
+        that.sendResponse(500, { ok: false, message: "Cannot continue without a valid database URL. Contact your system administrator."});
         fluid.fail("you must set a database URL in order to use this component.");
     }
 
     if (!that.request.params || !that.request.params.uniqueId) {
         that.sendResponse(400, { ok: false, message: "You must provide a uniqueId to use this interface."});
+        return;
     }
 
-    gpii.ptd.api.record.get.handler.handleRequest(that);
-};
 
-gpii.ptd.api.record.get.handler.handleRequest = function (that) {
     // Extract the parameters we will use throughout the process from the request.
     that.params = gpii.ptd.api.lib.params.extractParams(that.request.query, that.options.queryFields);
     that.params.uniqueId = that.request.params.uniqueId;
@@ -121,16 +120,10 @@ fluid.defaults("gpii.ptd.api.record.get.handler", {
                 listeners: {
                     "onChildrenLoaded": {
                         funcName: "gpii.ptd.api.record.get.handler.sendRecord",
-                        args: [ "{gpii.ptd.api.record.get}", "{children}.model.processedRecords" ]
+                        args: [ "{gpii.ptd.api.record.get.handler}", "{children}.model.processedRecords" ]
                     }
                 }
             }
-        }
-    },
-    listeners: {
-        "onCreate.checkRequirements": {
-            funcName: "gpii.ptd.api.record.get.handler.checkRequirements",
-            args:     ["{that}"]
         }
     },
     invokers: {

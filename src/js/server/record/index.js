@@ -20,7 +20,9 @@ require("./get/index");
  */
 
 fluid.defaults("gpii.ptd.api.record.noIdHandler", {
-    gradeNames: ["gpii.express.handler"],
+    gradeNames: ["gpii.schema.handler"],
+    schemaKey:  "message.json",
+    schemaUrl:  "http://ul.gpii.net/api/schemas/message.json",
     invokers: {
         handleRequest: {
             func: "{that}.sendResponse",

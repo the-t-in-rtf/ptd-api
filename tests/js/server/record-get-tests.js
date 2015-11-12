@@ -4,8 +4,6 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-fluid.setLogging(true);
-
 require("./lib");
 
 var jqUnit = require("node-jqunit");
@@ -36,7 +34,7 @@ gpii.ptd.api.record.get.tests.caseHolder.verifyRecord = function (environment, r
 };
 
 gpii.ptd.api.record.get.tests.caseHolder.verifyHasChildren = function (environment, response, body) {
-    gpii.ptd.api.record.get.tests.caseHolder.verifyRecord(response, body);
+    gpii.ptd.api.record.get.tests.caseHolder.verifyRecord(environment, response, body);
 
     var jsonData = JSON.parse(body);
     jqUnit.assertTrue("The record returned should have child data...", jsonData.record.aliases.length > 0);
@@ -159,43 +157,43 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
         missingDataRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: ""
+                endpoint: "record/"
             }
         },
         simpleRecordRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "6DotComputerBrailleTable"
+                endpoint: "record/6DotComputerBrailleTable"
             }
         },
         missingRecordRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "notGonnaFindThisOne"
+                endpoint: "record/notGonnaFindThisOne"
             }
         },
         termWithChildrenRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "6DotComputerBrailleTable?children=true"
+                endpoint: "record/6DotComputerBrailleTable?children=true"
             }
         },
         termWithoutChildrenRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "6DotComputerBrailleTable?children=false"
+                endpoint: "record/6DotComputerBrailleTable?children=false"
             }
         },
         aliasWithChildrenRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "AbsolutePointing?children=true"
+                endpoint: "record/AbsolutePointing?children=true"
             }
         },
         spaceRequest: {
             type: "gpii.ptd.api.tests.request",
             options: {
-                endpoint: "absolute%20pointing"
+                endpoint: "record/absolute%20pointing"
             }
         }
     }

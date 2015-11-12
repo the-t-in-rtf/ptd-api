@@ -1,7 +1,6 @@
 // Tests for the "children" module.
 "use strict";
 var fluid = require("infusion");
-fluid.setLogging(true);
 
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.tests.childrenTests");
