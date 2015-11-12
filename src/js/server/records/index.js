@@ -227,7 +227,7 @@ fluid.defaults("gpii.ptd.api.records.handler", {
 });
 
 fluid.defaults("gpii.ptd.api.records", {
-    gradeNames:     ["gpii.express.requestAware.router"],
+    gradeNames:     ["gpii.express.router.passthrough"],
     path:           "/records",
     querySchemaKey: "records-query.json",
     schemaKey:      "records.json",

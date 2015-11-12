@@ -17,23 +17,23 @@ require("gpii-mail-test");
 require("gpii-pouch");
 require("gpii-pouchdb-lucene");
 
-require("../../../index.js");
+require("../../../../index.js");
 
 var viewDirs  = [
     path.resolve(__dirname, "../../../src/templates"),
     path.resolve(__dirname, "../../../node_modules/gpii-express-user/src/templates")
 ];
 
-var recordData = path.resolve(__dirname, "../../data/pouchdb/records.json");
-var apiView    = path.resolve(__dirname, "../../data/views/api.json");
-var luceneView = path.resolve(__dirname, "../../data/views/lucene.json");
+var recordData = path.resolve(__dirname, "../../../data/pouchdb/records.json");
+var apiView    = path.resolve(__dirname, "../../../data/views/api.json");
+var luceneView = path.resolve(__dirname, "../../../data/views/lucene.json");
 
-var userData   = path.resolve(__dirname, "../../data/pouchdb/users.json");
+var userData   = path.resolve(__dirname, "../../../data/pouchdb/users.json");
 
-var bowerDir   = path.resolve(__dirname, "../../../bower_components");
-var modulesDir = path.resolve(__dirname, "../../../node_modules");
-var srcDir     = path.resolve(__dirname, "../../../src");
-var schemaDir  = path.resolve(__dirname, "../../../src/schemas");
+var bowerDir   = path.resolve(__dirname, "../../../../bower_components");
+var modulesDir = path.resolve(__dirname, "../../../../node_modules");
+var srcDir     = path.resolve(__dirname, "../../../../src");
+var schemaDir  = path.resolve(__dirname, "../../../../src/schemas");
 
 // The performance of our pouch views is terrible unless we take the time to hit them once.
 fluid.registerNamespace("gpii.ptd.api.tests.harness");
@@ -267,7 +267,7 @@ fluid.defaults("gpii.ptd.api.tests.harness", {
 // In earlier tests, this appeared to be necessary to prevent individual requests from timing out.  It does not
 // appear to be necessary now, but is left as a reference and in case performance is poorer in other environments.
 //
-fluid.defaults("gpii.ptd.api.tests.harness.loadViews", {
+fluid.defaults("gpii.ptd.api.tests.harness.loadsViewsOnStartup", {
     gradeNames: ["gpii.ptd.api.tests.harness"],
     viewsToLoad: [
         "_design/api/_view/children",

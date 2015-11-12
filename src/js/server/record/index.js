@@ -1,42 +1,50 @@
 "use strict";
+var fluid = require("infusion");
 
-// TODO:  We are in the process of converting this to a Fluid component
-
-var fluid = fluid || require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
-
-require("../lib/fixedResponse/index");
+require("gpii-express");
 require("./get/index");
 
-// All handlers for /api/record
-module.exports = function (config) {
-    var express = require("express");
+/*
 
-    var router = express.Router();
+ TODO:  Convert these to Fluid components and integrate.
 
-    var get = gpii.ptd.api.record.get({
-        couchUrl: config["couch.url"],
-        baseUrl:  config["base.url"]
-    });
-    router.get("/:uniqueId", get.getRouter());
+ var put = require("./put/index")(config);
+ router.put("/", put);
 
-    var noid = gpii.ptd.api.lib.fixedResponse({
-        path:       "/",
-        baseUrl:    config["base.url"],
-        statusCode: 400,
-        ok:         false,
-        message:    "You must provide a uniqueId."
-    });
-    router.get("/", noid.getRouter());
+ var post = require("./post/index")(config);
+ router.post("/", post);
 
-    var put = require("./put/index")(config);
-    router.put("/", put);
+ var del = require("./delete/index")(config);
+ router.delete("/", del);
 
-    var post = require("./post/index")(config);
-    router.post("/", post);
+ */
 
-    var del = require("./delete/index")(config);
-    router.delete("/", del);
+fluid.defaults("gpii.ptd.api.record.noIdHandler", {
+    gradeNames: ["gpii.express.handler"],
+    invokers: {
+        handleRequest: {
+            func: "{that}.sendResponse",
+            args: [400, { ok: false, message: "You must provide a uniqueId."}]
+        }
+    }
+});
 
-    return router;
-};
+fluid.defaults("gpii.ptd.api.record", {
+    gradeNames:    ["gpii.express.router.passthrough"],
+    path:          "/record",
+    components: {
+        get: {
+            type: "gpii.ptd.api.record.get",
+            options: {
+                dbName: "{gpii.ptd.api.record}.options.dbName"
+            }
+        },
+        noId: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                path:          "/",
+                handlerGrades: ["gpii.ptd.api.record.noIdHandler"]
+            }
+        }
+    }
+});

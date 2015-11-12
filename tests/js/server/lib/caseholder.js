@@ -10,6 +10,9 @@
  */
 var fluid = require("infusion");
 
+var express = require("gpii-express");
+express.loadTestingSupport();
+
 fluid.defaults("gpii.ptd.api.tests.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
     sequenceEnd: [

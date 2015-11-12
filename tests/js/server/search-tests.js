@@ -4,16 +4,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./test-environment");
-require("./caseholder");
-
-var express = require("gpii-express");
-express.loadTestingSupport();
-
-require("../lib/testUtils");
-
-var kettle = require("kettle");
-kettle.loadTestingSupport();
+require("./lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -128,19 +119,6 @@ gpii.ptd.api.search.tests.caseHolder.verifySecondQualifiedResponse = function (e
         jqUnit.assertTrue("Either the record or one of its aliases should contain the search term in the right field...", hasSearchTerm);
     });
 };
-
-fluid.defaults("gpii.ptd.api.search.tests.request", {
-    gradeNames: ["kettle.test.request.http"],
-    path: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["%baseUrl%endpoint", { baseUrl: "{testEnvironment}.options.apiUrl", endpoint: "{that}.options.endpoint"}]
-        }
-    },
-    port: "{testEnvironment}.options.apiPort",
-    method: "GET"
-});
-
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.search.tests.caseHolder", {
@@ -286,61 +264,61 @@ fluid.defaults("gpii.ptd.api.search.tests.caseHolder", {
      */
     components: {
         searchWithOnlyQuery: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=android"
             }
         },
         searchWithoutQuery: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search"
             }
         },
         searchWithImpossibleQuery: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=flibbertygibbit"
             }
         },
         searchWithLimit: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=braille&limit=5"
             }
         },
         firstSearchWithPaging: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "/search?q=keyboard&offset=9&limit=1"
             }
         },
         secondSearchWithPaging: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=keyboard&limit=10"
             }
         },
         firstSearchWithSorting: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=keyboard&sort=definition"
             }
         },
         secondSearchWithSorting: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=keyboard&sort=%5cdefinition"
             }
         },
         firstSearchWithQualifiers: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=computer"
             }
         },
         secondSearchWithQualifiers: {
-            type: "gpii.ptd.api.search.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "search?q=termLabel:computer"
             }
@@ -350,9 +328,10 @@ fluid.defaults("gpii.ptd.api.search.tests.caseHolder", {
 
 gpii.ptd.api.tests.testEnvironment({
     ports: {
-        api:   9786,
-        pouch: 6987,
-        mail:  7925
+        api:    9786,
+        couch:  6987,
+        lucene: 8686,
+        mail:   7925
     },
     components: {
         testCaseHolder: {

@@ -18,28 +18,32 @@ gpii.ptd.api.tests.testEnvironment.shutdownLucene = function (that) {
 fluid.defaults("gpii.ptd.api.tests.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment"],
     hangWait:   30000, // Our views take way too long to cache, so we need to relax the timeouts.
-    apiPort:    "3959",
-    apiUrl: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/api/", { port: "{that}.options.apiPort"}]
+    ports: {
+        api:    "3959",
+        couch:  "9599",
+        lucene: "9959",
+        mail:   "2525"
+    },
+    urls: {
+        api: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/api/", { port: "{that}.options.ports.api"}]
+            }
+        },
+        couch: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/", { port: "{that}.options.ports.couch"}]
+            }
+        },
+        lucene: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/", { port: "{that}.options.ports.lucene"}]
+            }
         }
     },
-    pouchPort:  "9599",
-    pouchUrl: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/", { port: "{that}.options.pouchPort"}]
-        }
-    },
-    lucenePort: "9959",
-    luceneUrl: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/", { port: "{that}.options.lucenePort"}]
-        }
-    },
-    mailPort:   "2525",
     events: {
         onStarted:                null,
         constructServer:          null,
@@ -51,13 +55,8 @@ fluid.defaults("gpii.ptd.api.tests.testEnvironment", {
             type:          "gpii.ptd.api.tests.harness",
             createOnEvent: "constructServer",
             options: {
-                apiPort:    "{testEnvironment}.options.apiPort",
-                apiUrl:     "{testEnvironment}.options.apiUrl",
-                lucenePort: "{testEnvironment}.options.lucenePort",
-                luceneUrl:  "{testEnvironment}.options.luceneUrl",
-                pouchPort:  "{testEnvironment}.options.pouchPort",
-                pouchUrl:   "{testEnvironment}.options.pouchUrl",
-                mailPort:   "{testEnvironment}.options.mailPort",
+                ports: "{testEnvironment}.options.ports",
+                urls:  "{testEnvironment}.options.ports",
                 listeners: {
                     "onReady.notifyParent": {
                         func: "{testEnvironment}.events.onStarted.fire"
@@ -73,6 +72,28 @@ fluid.defaults("gpii.ptd.api.tests.testEnvironment", {
         "shutdownLucene": {
             funcName: "gpii.ptd.api.tests.testEnvironment.shutdownLucene",
             args:     "{that}"
+        }
+    }
+});
+
+fluid.defaults("gpii.ptd.api.tests.testEnvironment.loadsViewsOnStartup", {
+    gradeNames: ["gpii.ptd.api.tests.testEnvironment"],
+    components: {
+        harness: {
+            type:          "gpii.ptd.api.tests.harness.loadsViewsOnStartup",
+            createOnEvent: "constructServer",
+            options: {
+                ports: "{testEnvironment}.options.ports",
+                urls:  "{testEnvironment}.options.ports",
+                listeners: {
+                    "onReady.notifyParent": {
+                        func: "{testEnvironment}.events.onStarted.fire"
+                    },
+                    "onLuceneShutdownComplete.notifyParent": {
+                        func: "{testEnvironment}.events.onLuceneShutdownComplete.fire"
+                    }
+                }
+            }
         }
     }
 });

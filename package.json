@@ -14,7 +14,7 @@
     "url": "https://github.com/GPII/ptd-api"
   },
   "dependencies": {
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#74a1a6aee4d95da786b1e15b574bf934a66efe3f",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#dab5e13894e8b98b91facc71b37e56180af867ef",
     "gpii-express-user": "git://github.com/the-t-in-rtf/gpii-express-user.git#bb538ef7886ccb2f63c22dbb6b2907cefc7b6c21",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#791b23adf0e367f9fc124d8cd967b0551fd6c08f",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#c321910a3ec2b9792996aeef9e64cc0cfd620afb",

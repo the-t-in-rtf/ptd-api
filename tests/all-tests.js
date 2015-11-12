@@ -1,17 +1,15 @@
 "use strict";
-var fluid = require('infusion'),
-    kettle = fluid.require("kettle", require);
 
-fluid.require("kettle/test/utils/js/KettleTestUtils", require);
+// Sub-component tests
+require("./js/server/children-tests");
+require("./js/server/filters-tests");
+require("./js/server/paging-tests");
+require("./js/server/params-tests");
+require("./js/server/sorting-tests");
 
-var testIncludes = [
-    // Run all tests included in the list.
-    "../api/search/tests/search-and-suggest.js"
-];
-var tests = [];
+// API endpoint tests
+//TODO: require("./js/server/record-get-tests");
+require("./js/server/records-tests");
+require("./js/server/search-tests");
 
-fluid.each(testIncludes, function (path) {
-    tests = tests.concat(fluid.require(path, require));
-});
-
-fluid.test.runTests(tests);
+// TODO:  Add client tests

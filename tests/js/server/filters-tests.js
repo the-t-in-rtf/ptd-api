@@ -2,8 +2,8 @@
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
-require("../../../src/js/server/lib/filters");
 
+require("../../../src/js/server/lib/filters");
 
 var jqUnit = require("node-jqunit");
 

@@ -6,15 +6,9 @@ fluid.setLogging(true);
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.tests.childrenTests");
 
-require("gpii-express");
-require("gpii-pouch");
 require("../../../src/js/server/lib/children");
 
-require("gpii-express/tests/js/lib/test-helpers");
-require("./test-environment");
-
-var kettle = require("kettle");
-kettle.loadTestingSupport();
+require("./lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -41,15 +35,8 @@ gpii.ptd.api.tests.childrenTestCaseHolder.confirmHasNoChildren = function (that)
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
+    ports:      "{testEnvironment}.options.ports",
     dbName:     "records",
-    urls: {
-        db: {
-            expander: {
-                funcName: "fluid.stringTemplate",
-                args:     ["%baseUrl%dbName/", { baseUrl: "{testEnvironment}.options.pouchUrl", dbName: "{that}.options.dbName"}]
-            }
-        }
-    },
     testData: {
         "notReadyForChildren": [
             { type: "term" }, // No uniqueId
@@ -62,6 +49,16 @@ fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
             { type: "term", uniqueId: "alertDialogShowHelp" }
         ]
     },
+    distributeOptions: [
+        {
+            source: "{that}.options.ports",
+            target: "{that gpii.ptd.api.lib.children}.options.ports"
+        },
+        {
+            source: "{that}.options.dbName",
+            target: "{that gpii.ptd.api.lib.children}.options.dbName"
+        }
+    ],
     rawModules: [
         {
             tests: [
@@ -171,31 +168,18 @@ fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
         badDbUrl: {
             type: "gpii.ptd.api.lib.children",
             options: {
-                urls: {
-                    couch: {
-                        expander: {
-                            funcName: "fluid.stringTemplate",
-                            args:     ["%baseUrlTotally/Bogus/View/", { baseUrl: "{testEnvironment}.options.pouchUrl"}]
-                        }
-                    }
-                }
+                viewPath: "%baseUrlTotally/Bogus/View/"
             }
         },
         badViewPath: {
             type: "gpii.ptd.api.lib.children",
             options: {
-                urls: {
-                    couch: "{caseHolder}.options.urls.db"
-                },
                 viewPath: "_design/api/_view/changeling"
             }
         },
         reallyBadViewPath: {
             type: "gpii.ptd.api.lib.children",
             options: {
-                urls: {
-                    couch: "{caseHolder}.options.urls.db"
-                },
                 viewPath: "/_design/api/_view/changeling",  // The leading slash should not cause problems
                 model: {
                     parentRecords: "{caseHolder}.options.testData.readyForChildren"
@@ -206,9 +190,12 @@ fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
 });
 
 gpii.ptd.api.tests.testEnvironment({
-    apiPort:   9784,
-    pouchPort: 6985,
-    mailPort:  7725,
+    ports: {
+        api:    9784,
+        couch:  6985,
+        lucene: 6555,
+        mail:   7725
+    },
     components: {
         testCaseHolder: {
             type: "gpii.ptd.api.tests.children.caseHolder"

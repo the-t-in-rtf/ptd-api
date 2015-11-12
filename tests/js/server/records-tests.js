@@ -2,16 +2,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./test-environment");
-require("./caseholder");
-
-var kettle = require("kettle");
-kettle.loadTestingSupport();
-
-var express = require("gpii-express");
-express.loadTestingSupport();
-
-require("../lib/testUtils");
+require("./lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -348,32 +339,6 @@ gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse = functi
     jqUnit.assertTrue("There should always be more records when we supply an additional status to match...", secondRecordCount > previousRequestComponent.firstRecordCount);
 };
 
-fluid.defaults("gpii.ptd.api.records.tests.request", {
-    gradeNames: ["kettle.test.request.http"],
-    path: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["%baseUrl%endpoint", { baseUrl: "{testEnvironment}.options.apiUrl", endpoint: "{that}.options.endpoint"}]
-        }
-    },
-    port: "{testEnvironment}.options.apiPort",
-    method: "GET"
-});
-
-fluid.defaults("gpii.ptd.api.records.tests.request.couch", {
-    gradeNames: ["kettle.test.request.http"],
-    path: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["%baseUrl%endpoint", { baseUrl: "{testEnvironment}.options.pouchUrl", endpoint: "{that}.options.endpoint"}]
-        }
-    },
-    port: "{testEnvironment}.options.pouchPort",
-    method: "GET"
-});
-
-//TODO: Pouch is not cleanly destroyed between runs.  Check the old required test sequences once each test is confirmed working individually.
-
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
     gradeNames: ["gpii.ptd.api.tests.caseHolder"],
@@ -627,127 +592,127 @@ fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
     ],
     components: {
         recordsDefaults: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records"
             }
         },
         termsDefaults: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms"
             }
         },
         aliasesDefaults: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases"
             }
         },
         recordsFirstPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?offset=0&limit=2"
             }
         },
         recordsSecondPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?offset=1&limit=1"
             }
         },
         termsFirstPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?offset=0&limit=2"
             }
         },
         termsSecondPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?offset=1&limit=1"
             }
         },
         aliasesFirstPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?offset=0&limit=2"
             }
         },
         aliasesSecondPage: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?offset=1&limit=1"
             }
         },
         recordsFirstSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?sort=termLabel"
             }
         },
         recordsSecondSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?sort=%5CtermLabel"
             }
         },
         termsFirstSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?sort=termLabel"
             }
         },
         termsSecondSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?sort=%5CtermLabel"
             }
         },
         aliasesFirstSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?sort=termLabel"
             }
         },
         aliasesSecondSort: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?sort=%5CtermLabel"
             }
         },
         recordsFirstStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?status=deleted"
             }
         },
         recordsSecondStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "records?status=unreviewed&status=deleted"
             }
         },
         termsFirstStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?status=deleted"
             }
         },
         termsSecondStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "terms?status=unreviewed&status=deleted"
             }
         },
         aliasesFirstStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?status=deleted"
             }
         },
         aliasesSecondStatusLimited: {
-            type: "gpii.ptd.api.records.tests.request",
+            type: "gpii.ptd.api.tests.request",
             options: {
                 endpoint: "aliases?status=unreviewed&status=deleted"
             }
@@ -759,9 +724,10 @@ fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
 
 gpii.ptd.api.tests.testEnvironment({
     ports: {
-        api:   9786,
-        pouch: 6987,
-        mail:  7925
+        api:    9786,
+        couch:  6987,
+        lucene: 6868,
+        mail:   7925
     },
     components: {
         testCaseHolder: {

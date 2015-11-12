@@ -4,74 +4,44 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-express");
-require("../../../node_modules/gpii-express/src/js/configholder");
 require("../../lib/children/index");
 require("../../lib/params/index");
-require("../../../schema/lib/request");
 
 var request = require("request");
 
-fluid.registerNamespace("gpii.ptd.api.record.get.request");
+fluid.registerNamespace("gpii.ptd.api.record.get.handler");
 
-gpii.ptd.api.record.get.request.checkRequirements = function (that) {
-    if (!that.options.couchUrl) {
-        fluid.fail("you must set a couchUrl option in order to use this component.");
-    }
-    if (!that.options.schemaName) {
-        fluid.fail("You must configure a schema name to be used for responses.");
-    }
-    if (!that.options.querySchemaName) {
-        fluid.fail("You must configure a schema name to be used to validate user input.");
+gpii.ptd.api.record.get.handler.checkRequirements = function (that) {
+    if (!that.options.urls.db) {
+        fluid.fail("you must set a database URL in order to use this component.");
     }
 
-    gpii.ptd.api.record.get.request.handleRequest(that);
+    if (!that.request.params || !that.request.params.uniqueId) {
+        that.sendResponse(400, { ok: false, message: "You must provide a uniqueId to use this interface."});
+    }
+
+    gpii.ptd.api.record.get.handler.handleRequest(that);
 };
 
-gpii.ptd.api.record.get.request.handleRequest = function (that) {
-    try {
-        // Make sure the user has sent us valid input
-        gpii.ptd.api.record.get.request.extractParamsAndValidate(that);
-    }
-    catch (err) {
-        that.sendSchemaAwareResponse(400, "message", { ok: false, message: err });
-        return;
-    }
-
-    // We prepend a ./ to the second half of the URL to ensure that the database name is not stripped out.
-    var couchRequestUrl = that.options.couchUrl + that.options.couchViewPath;
+gpii.ptd.api.record.get.handler.handleRequest = function (that) {
+    // Extract the parameters we will use throughout the process from the request.
+    that.params = gpii.ptd.api.lib.params.extractParams(that.request.query, that.options.queryFields);
+    that.params.uniqueId = that.request.params.uniqueId;
 
     var requestConfig = {
-        url:     couchRequestUrl,
+        url:     that.options.urls.db,
         qs:      { key: "\"" + that.params.uniqueId + "\"" },
         json:    true,
-        timeout: 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
+        timeout: 5000 // In practice, we probably only need a second, but the defaults are definitely too low.
     };
 
     request(requestConfig, that.processCouchResponse);
 };
 
 
-gpii.ptd.api.record.get.request.extractParamsAndValidate = function (that) {
-    // Extract the parameters we will use throughout the process from the request.
-    that.params = gpii.ptd.api.lib.params.extractParams(that.request.query, that.options.queryFields);
-
-    that.params.uniqueId = that.request.params.uniqueId;
-
-    // Start by validating using JSON Schema
-    var errors = that.helper.validate(that.options.querySchemaName, that.params);
-    if (errors) {
-        throw (errors);
-    }
-};
-
-gpii.ptd.api.record.get.request.processCouchResponse = function (that, error, _, body) {
+gpii.ptd.api.record.get.handler.processCouchResponse = function (that, error, _, body) {
     if (error) {
-        var errorBody = {
-            "ok": false,
-            "message": error
-        };
-
-        that.sendSchemaAwareResponse("500", "message", errorBody);
+        that.sendResponse("500", { "ok": false, "message": error});
         return;
     }
 
@@ -85,16 +55,15 @@ gpii.ptd.api.record.get.request.processCouchResponse = function (that, error, _,
             that.children.applier.change("originalRecords", [record]);
         }
         else {
-            gpii.ptd.api.record.get.request.sendRecord(that, [record]);
+            gpii.ptd.api.record.get.handler.sendRecord(that, [record]);
         }
     }
     else {
-        // We somehow did not receive records from couch.  Pass on whatever we did receive.
-        that.sendSchemaAwareResponse("404", "message", { ok: false, message: "No record was found for the given uniqueId." });
+        that.sendResponse("404", { ok: false, message: "No record was found for the given uniqueId." });
     }
 };
 
-gpii.ptd.api.record.get.request.sendRecord = function (that, records) {
+gpii.ptd.api.record.get.handler.sendRecord = function (that, records) {
     var responseBody = {
         "retrievedAt": new Date()
     };
@@ -112,14 +81,28 @@ gpii.ptd.api.record.get.request.sendRecord = function (that, records) {
         responseBody.message = "No record was found for this uniqueId.";
     }
 
-    that.sendSchemaAwareResponse(statusCode, that.options.schemaName, responseBody);
+    that.sendResponse(statusCode, responseBody);
 };
 
-fluid.defaults("gpii.ptd.api.record.get.request", {
-    gradeNames:     ["gpii.schema.requestAware"],
+fluid.defaults("gpii.ptd.api.record.get.handler", {
+    gradeNames:      ["gpii.schema.handler"],
     schemaName:      "record",
     querySchemaName: "record-query",
-    couchViewPath:   "_design/api/_view/entries",
+    viewPath:        "_design/api/_view/entries",
+    maxKeyData:        "{gpii.ptd.api.record.get}.options.maxKeyData",
+    schemaDir:         "{gpii.ptd.api.record.get}.options.schemaDir",
+    schemaKey:         "{gpii.ptd.api.record.get}.options.schemaKey",
+    schemaUrl:         "{gpii.ptd.api.record.get}.options.schemaUrl",
+    dbName:            "{gpii.ptd.api.record.get}.options.dbName",
+    ports:             "{gpii.ptd.api.record.get}.options.ports",
+    urls: {
+        db: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/%dbName/%viewPath", { port: "{that}.options.ports.couch", dbName: "{that}.options.dbName", viewPath: "{that}.options.viewPath"}]
+            }
+        }
+    },
     // The list of query fields we support, with hints about their defaults (if any) and their default value (if any)
     //
     // All actual query input validation is handled using a JSON schema.
@@ -133,11 +116,12 @@ fluid.defaults("gpii.ptd.api.record.get.request", {
         "children": {
             type: "gpii.ptd.api.lib.children",
             options: {
-                couchUrl: "{request}.options.couchUrl",
+                ports:  "{gpii.ptd.api.record.get.handler}.options.ports",
+                dbName: "{gpii.ptd.api.record.get.handler}.options.dbName",
                 listeners: {
                     "onChildrenLoaded": {
-                        funcName: "gpii.ptd.api.record.get.request.sendRecord",
-                        args: [ "{gpii.ptd.api.record.get.request}", "{children}.model.processedRecords" ]
+                        funcName: "gpii.ptd.api.record.get.handler.sendRecord",
+                        args: [ "{gpii.ptd.api.record.get}", "{children}.model.processedRecords" ]
                     }
                 }
             }
@@ -145,33 +129,53 @@ fluid.defaults("gpii.ptd.api.record.get.request", {
     },
     listeners: {
         "onCreate.checkRequirements": {
-            funcName: "gpii.ptd.api.record.get.request.checkRequirements",
+            funcName: "gpii.ptd.api.record.get.handler.checkRequirements",
             args:     ["{that}"]
         }
     },
     invokers: {
         processCouchResponse: {
-            funcName: "gpii.ptd.api.record.get.request.processCouchResponse",
+            funcName: "gpii.ptd.api.record.get.handler.processCouchResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        },
+        handleRequest: {
+            funcName: "gpii.ptd.api.record.get.handler.handleRequest",
+            args:     ["{that}"]
         }
     }
-
 });
 
-fluid.registerNamespace("gpii.ptd.api.record.get");
 fluid.defaults("gpii.ptd.api.record.get", {
-    gradeNames:        ["gpii.express.requestAware.router"],
-    path:              "/:uniqueId",
-    requestAwareGrade: "gpii.ptd.api.record.get.request",
-    children:          true,
-    timeout:           5000,
-    dynamicComponents: {
-        requestHandler: {
+    gradeNames:     ["gpii.express.router.passthrough"],
+    path:           "/:uniqueId",
+    method:         "get",
+    querySchemaKey: "record-query.json",
+    schemaKey:      "record.json",
+    schemaUrl:      "https://terms.raisingthefloor.org/api/schemas/record.json",
+    type:           "record",
+    children:       false,
+    components: {
+        schemaMiddleware: {
+            type: "gpii.schema.middleware.hasParser",
             options: {
-                timeout:         "{get}.options.timeout",
-                couchUrl:        "{get}.options.couchUrl",
-                children:        "{get}.options.children",
-                baseUrl:         "{get}.options.baseUrl"
+                schemaKey: "{gpii.ptd.api.record.get}.options.querySchemaKey",
+                schemaDir: "{gpii.ptd.api.record.get}.options.schemaDir",
+                rules: {
+                    requestContentToValidate: {
+                        "": "query"
+                    }
+                }
+            }
+        },
+        mainRouter: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                path:           "/",
+                // Required to preserve the value of /:uniqueId held by the parent.
+                routerOptions: {
+                    mergeParams: true
+                },
+                handlerGrades:  ["gpii.ptd.api.record.get.handler"]
             }
         }
     }

@@ -8,7 +8,7 @@ var path = require("path");
 var schemaDir = path.resolve(__dirname, "../../schemas");
 
 require("./docs");
-//require("./record");
+require("./record");
 require("./records");
 require("./search");
 
@@ -35,9 +35,12 @@ fluid.defaults("gpii.ptd.api.router", {
         }
     ],
     components: {
-        //record: {
-        //    type: "gpii.ptd.api.record"
-        //},
+        record: {
+            type: "gpii.ptd.api.record",
+            options: {
+                dbName: "{gpii.ptd.api.router}.options.dbName"
+            }
+        },
         records: {
             type: "gpii.ptd.api.records",
             options: {
