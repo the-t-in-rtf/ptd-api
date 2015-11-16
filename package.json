@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#dab5e13894e8b98b91facc71b37e56180af867ef",
-    "gpii-express-user": "git://github.com/the-t-in-rtf/gpii-express-user.git#bb538ef7886ccb2f63c22dbb6b2907cefc7b6c21",
+    "gpii-express-user": "git://github.com/the-t-in-rtf/gpii-express-user.git#f896b9f585c57e9b016c88754f044f0ff1f193dc",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#791b23adf0e367f9fc124d8cd967b0551fd6c08f",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#c321910a3ec2b9792996aeef9e64cc0cfd620afb",
     "grunt": "~0.4.4",
@@ -23,7 +23,7 @@
     "grunt-contrib-jshint": "~0.9.0",
     "grunt-jsonlint": "1.0.4",
     "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
-    "infusion": "git://github.com/fluid-project/infusion.git#539c8dc6bdd2170944c0a4c58da52dd37fb098c0",
+    "infusion": "2.0.0-dev.20151113T224751Z.3ba00f2",
     "marked": "^0.3.2",
     "request": "2.51.0",
     "underscore-node": "^0.1.2"

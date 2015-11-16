@@ -1,11 +1,16 @@
+/*
+
+    Handle calls to `GET /api/record/:uniqueId`, including returning an appropriate error if no `uniqueId` value is provided.
+
+ */
 "use strict";
 
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-express");
-require("../../lib/children/index");
-require("../../lib/params/index");
+require("../../lib/children");
+require("../../lib/params");
 
 var request = require("request");
 
@@ -138,9 +143,21 @@ fluid.defaults("gpii.ptd.api.record.get.handler", {
     }
 });
 
+fluid.defaults("gpii.ptd.api.record.get.noIdHandler", {
+    gradeNames: ["gpii.schema.handler"],
+    schemaKey:  "message.json",
+    schemaUrl:  "http://ul.gpii.net/api/schemas/message.json",
+    invokers: {
+        handleRequest: {
+            func: "{that}.sendResponse",
+            args: [400, { ok: false, message: "You must provide a uniqueId."}]
+        }
+    }
+});
+
 fluid.defaults("gpii.ptd.api.record.get", {
     gradeNames:     ["gpii.express.router.passthrough"],
-    path:           "/:uniqueId",
+    path:           "/",
     method:         "get",
     querySchemaKey: "record-query.json",
     schemaKey:      "record.json",
@@ -160,15 +177,23 @@ fluid.defaults("gpii.ptd.api.record.get", {
                 }
             }
         },
-        mainRouter: {
+        recordRouter: {
             type: "gpii.express.requestAware.router",
             options: {
-                path:           "/",
                 // Required to preserve the value of /:uniqueId held by the parent.
                 routerOptions: {
                     mergeParams: true
                 },
+                path:           "/:uniqueId",
+                method:         "get",
                 handlerGrades:  ["gpii.ptd.api.record.get.handler"]
+            }
+        },
+        noIdRouter: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                path:          "/",
+                handlerGrades: ["gpii.ptd.api.record.get.noIdHandler"]
             }
         }
     }

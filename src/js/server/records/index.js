@@ -7,11 +7,11 @@ fluid.registerNamespace("gpii.ptd.api.records");
 require("gpii-express");
 require("gpii-json-schema");
 
-require("../lib/sorting/index");
-require("../lib/filters/index");
-require("../lib/paging/index");
-require("../lib/children/index");
-require("../lib/params/index");
+require("../lib/sorting");
+require("../lib/filters");
+require("../lib/paging");
+require("../lib/children");
+require("../lib/params");
 
 var request  = require("request");
 

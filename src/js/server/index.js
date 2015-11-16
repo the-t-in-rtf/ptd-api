@@ -4,8 +4,7 @@
 "use strict";
 var fluid = require("infusion");
 
-var path = require("path");
-var schemaDir = path.resolve(__dirname, "../../schemas");
+require("gpii-express-user");
 
 require("./docs");
 require("./record");
@@ -35,6 +34,33 @@ fluid.defaults("gpii.ptd.api.router", {
         }
     ],
     components: {
+        // Required middleware
+        json: {
+            type: "gpii.express.middleware.bodyparser.json"
+        },
+        urlencoded: {
+            type: "gpii.express.middleware.bodyparser.urlencoded"
+        },
+        cookieparser: {
+            type: "gpii.express.middleware.cookieparser"
+        },
+        session: {
+            type: "gpii.express.middleware.session",
+            options: {
+                config: {
+                    express: {
+                        session: {
+                            secret: "Printer, printer take a hint-ter."
+                        }
+                    }
+                }
+            }
+        },
+
+        docs: {
+            type: "gpii.ptd.api.docs"
+        },
+
         record: {
             type: "gpii.ptd.api.record",
             options: {
@@ -98,9 +124,22 @@ fluid.defaults("gpii.ptd.api.router", {
                 dbName: "{gpii.ptd.api.router}.options.dbName"
             }
         },
-        //user: {
-        //    type: "gpii.express.user"
-        //},
+        user: {
+            type: "gpii.express.user.api",
+            options: {
+                path: "/user",
+                couch: {
+                    port: "{harness}.options.ports.couch",
+                    userDbName: "users",
+                    userDbUrl: {
+                        expander: {
+                            funcName: "fluid.stringTemplate",
+                            args: ["http://localhost:%port/%userDbName", "{that}.options.couch"]
+                        }
+                    }
+                }
+            }
+        },
         schemas: {
             type: "gpii.express.router.static",
             options: {

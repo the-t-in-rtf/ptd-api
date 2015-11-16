@@ -2,7 +2,9 @@
 var fluid = require("infusion");
 
 require("gpii-express");
-require("./get/index");
+require("./delete");
+require("./get");
+require("./post");
 
 /*
 
@@ -11,41 +13,29 @@ require("./get/index");
  var put = require("./put/index")(config);
  router.put("/", put);
 
- var post = require("./post/index")(config);
- router.post("/", post);
-
- var del = require("./delete/index")(config);
- router.delete("/", del);
-
  */
-
-fluid.defaults("gpii.ptd.api.record.noIdHandler", {
-    gradeNames: ["gpii.schema.handler"],
-    schemaKey:  "message.json",
-    schemaUrl:  "http://ul.gpii.net/api/schemas/message.json",
-    invokers: {
-        handleRequest: {
-            func: "{that}.sendResponse",
-            args: [400, { ok: false, message: "You must provide a uniqueId."}]
-        }
-    }
-});
 
 fluid.defaults("gpii.ptd.api.record", {
     gradeNames:    ["gpii.express.router.passthrough"],
     path:          "/record",
+    method:        "use",
     components: {
+        "delete": {
+            type: "gpii.ptd.api.record.delete",
+            options: {
+                dbName: "{gpii.ptd.api.record}.options.dbName"
+            }
+        },
         get: {
             type: "gpii.ptd.api.record.get",
             options: {
                 dbName: "{gpii.ptd.api.record}.options.dbName"
             }
         },
-        noId: {
-            type: "gpii.express.requestAware.router",
+        post: {
+            type: "gpii.ptd.api.record.post",
             options: {
-                path:          "/",
-                handlerGrades: ["gpii.ptd.api.record.noIdHandler"]
+                dbName: "{gpii.ptd.api.record}.options.dbName"
             }
         }
     }

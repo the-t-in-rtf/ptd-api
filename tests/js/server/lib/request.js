@@ -11,7 +11,7 @@ var kettle = require("kettle");
 kettle.loadTestingSupport();
 
 fluid.defaults("gpii.ptd.api.tests.request", {
-    gradeNames: ["kettle.test.request.http"],
+    gradeNames: ["kettle.test.request.httpCookie"],
     path: {
         expander: {
             funcName: "fluid.stringTemplate",

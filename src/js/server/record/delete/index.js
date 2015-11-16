@@ -1,68 +1,130 @@
+/*
+
+ Handle DELETE /api/record/:uniqueId endpoint.
+
+ */
 "use strict";
+var fluid = require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
 
-module.exports = function(config) {
-    var fluid        = require('infusion');
-    var namespace    = "gpii.ctr.record.delete";
-    var record       = fluid.registerNamespace(namespace);
+var request = require("request");
 
-    var schemaHelper = require("../../../schema/lib/schema-helper")(config);
+fluid.registerNamespace("gpii.ptd.api.record.delete.handler");
 
-    record.error     = require("../../lib/error/index")(config);
+gpii.ptd.api.record["delete"].handler.handleInitialRequest = function (that) {
+    if (!that.request.params || ! that.request.params.uniqueId) {
+        return that.sendResponse(400, {"ok": false, "message": "You must provide a uniqueId of the record you wish to delete."});
+    }
 
-    var filters      = require("secure-filters");
-    var express      = require('express');
-
-    var router = express.Router();
-    router.delete('/:uniqueId', function(req, res){
-        schemaHelper.setHeaders(res, "message");
-
-        if (!req.params || ! req.params.uniqueId) {
-            return res.status(400).send({"ok": false, "message": "You must provide a uniqueId of the record you wish to delete."});
+    var lookupOptions = {
+        url: that.options.urls.lookup,
+        qs: {
+            key: that.request.params.uniqueId
         }
-
-        if (!req.session || !req.session.user) {
-            return res.status(401).send({"ok": false, "message": "You must be logged in to use this function."});
-        }
-
-        // Get the current document (we need its _rev value)
-        var readRequest = require('request');
-        var sanitizedId = filters.js(req.params.uniqueId);
-        readRequest.get(config['couch.url'] + "_design/api/_view/entries?key=%22" + sanitizedId + "%22", function(readError,readResponse,readBody) {
-            if (readError) {
-                console.log(readError);
-                return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + sanitizedId + "'..."});
-            }
-
-            var jsonData = JSON.parse(readBody);
-
-            // Confirm that the record actually exists
-            if (!jsonData || !jsonData.rows || !jsonData.rows[0]) {
-                console.log(jsonData);
-                return res.status(500).send({"ok": false, "message": "No record exists for uniqueId '" + sanitizedId + "'..."});
-            }
-
-            var updatedRecord = JSON.parse(JSON.stringify(jsonData.rows[0].value));
-            updatedRecord.status="deleted";
-            updatedRecord.updated = new Date().toISOString();
-
-            // TODO: Add support for versioning
-
-            var writeRequest = require('request');
-            writeRequest.del(config['couch.url'] + "/" + updatedRecord._id + "?rev=" + updatedRecord._rev, function(writeError, writeResponse, writeBody){
-                if (writeError) {
-                    console.log(writeError);
-                    return res.status(500).send({"ok": false, "message": "There was an error deleting the record with uniqueId '" + sanitizedId + "'..."});
-                }
-
-                if (writeResponse.statusCode === 200) {
-                    res.status(200).send({"ok":true, "message": "Record deleted."});
-                }
-                else {
-                    res.status(writeResponse.statusCode).send({"ok": false, "message": "There were one or more problems that prevented your delete from taking place.", "errors": writeBody.reason && writeBody.reason.errors ? writeBody.reason.errors : writeBody });
-                }
-            });
-        });
-    });
-
-    return router;
+    };
+    request.get(lookupOptions, that.processLookupResponse);
 };
+
+gpii.ptd.api.record["delete"].handler.processLookupResponse = function (that, error, response, body) {
+    if (error && error !== null) {
+        return that.sendResponse(500, {"ok": false, "message": "error looking up existing record:" + JSON.stringify(error)});
+    }
+
+    var jsonData = JSON.parse(body);
+    if (jsonData.rows && jsonData.rows.length > 0) {
+        var updatedRecord = JSON.parse(JSON.stringify(that.request.body));
+        updatedRecord.status = that.options.deletedStatus;
+        updatedRecord.updated = new Date().toISOString();
+
+        that.updatedRecord = updatedRecord;
+
+        // TODO: Set the "author" field to the current user (use req.session.user)
+
+        var writeOptions = {
+            "url":     that.options.urls.db,
+            "body":    JSON.stringify(updatedRecord),
+            "headers": {"Content-Type": "application/json"}
+        };
+        request.post(writeOptions, that.processWriteResponse);
+    }
+    else {
+        return that.sendResponse(404, {"ok": false, "message": "Can't delete record because no record with the given unique ID was found."});
+    }
+};
+
+gpii.ptd.api.record["delete"].handler.processWriteResponse = function (that, error, response, body) {
+    if (error) {
+        return that.sendResponse(500, {"ok": false, "message": "There was an error saving data to couch:" + JSON.stringify(error)});
+    }
+
+    if (response.statusCode === 201) {
+        return that.sendResponse(response.statusCode, {"ok": true, "message": "Record flagged as deleted.", "record": that.updatedRecord});
+    }
+    else {
+        var jsonData = JSON.parse(body);
+        return that.sendResponse(response.statusCode, {"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": JSON.stringify(jsonData.reason.errors) });
+    }
+
+    // TODO:  Add support for versioning
+};
+
+
+fluid.defaults("gpii.ptd.api.record.delete.handler", {
+    gradeNames:    ["gpii.schema.handler"],
+    schemaKey:     "message.json",
+    schemaUrl:     "http://ul.gpii.net/api/schemas/message.json",
+    viewPath:      "_design/api/_view/entries",
+    deletedStatus: "deleted",
+    urls: {
+        db: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/%dbName", { port: "{that}.options.ports.couch", dbName: "{gpii.ptd.api.record.post}.options.dbName"}]
+            }
+        },
+        lookup: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/%dbName/%viewPath", { port: "{that}.options.ports.couch", dbName: "{gpii.ptd.api.record.post}.options.dbName", viewPath: "{that}.options.viewPath"}]
+            }
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "gpii.ptd.api.record.delete.handler.handleInitialRequest",
+            args:     ["{that}"]
+        },
+        processLookupResponse: {
+            funcName: "gpii.ptd.api.record.delete.handler.processLookupResponse",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        },
+        processWriteResponse: {
+            funcName: "gpii.ptd.api.record.delete.handler.processWriteResponse",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+        }
+    }
+});
+
+fluid.defaults("gpii.ptd.api.record.delete", {
+    gradeNames:     ["gpii.express.router.passthrough"],
+    path:           "/",
+    method:         "delete",
+    dbName:         "tr",
+    components: {
+        gatekeeper: {
+            type: "gpii.express.user.middleware.loginRequired"
+        },
+        mainRouter: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                // Required to preserve the value of /:uniqueId held by the parent.
+                routerOptions: {
+                    mergeParams: true
+                },
+                method:         "delete",
+                path:           "/:uniqueId",
+                handlerGrades:  ["gpii.ptd.api.record.delete.handler"]
+            }
+        }
+    }
+});

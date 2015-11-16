@@ -44,3 +44,21 @@ gpii.ptd.api.tests.testUtils.isSaneResponse = function isSaneResponse(environmen
     var jsonData = JSON.parse(body);
     jqUnit.assertNotNull("The 'ok' variable should always be set...", jsonData.ok);
 };
+
+gpii.ptd.api.tests.testUtils.isExpectedResponse = function (environment, error, response, body, statusCode, expected, notExpected) {
+    gpii.ptd.api.tests.testUtils.isSaneResponse(environment, error, response, body);
+
+    console.log(body);
+
+    if (!statusCode) { statusCode = 200; }
+    jqUnit.assertEquals("The status code should be as expected...", statusCode, response.statusCode);
+
+    var data = typeof body === "string" ? JSON.parse(body) : body;
+    if (expected) {
+        jqUnit.assertLeftHand("The output should be as expected...", expected, data);
+    }
+
+    fluid.each(notExpected, function (field) {
+        jqUnit.assertTrue("There should not be a value for '" + field + "'...", !data[field]);
+    });
+};

@@ -16,14 +16,43 @@
 <script type="text/javascript" src="/nm/infusion/src/framework/core/js/ModelTransformation.js"></script>
 <script type="text/javascript" src="/nm/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
 
+<!-- Bring in Handlebars dependency -->
+<script type="text/javascript" src="/bc/handlebars/handlebars.js"></script>
+
+<!-- Bring in Pagedown dependency -->
+<script type="text/javascript" src="/bc/pagedown/Markdown.Converter.js"></script>
+<script type="text/javascript" src="/bc/pagedown/Markdown.Sanitizer.js"></script>
+
+<!-- template management -->
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/common/helper.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/common/jsonify.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/common/equals.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/common/md-common.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/md-client.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/renderer.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/binder.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/hasRequiredOptions.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/ajaxCapable.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/templateManager.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/templateAware.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/templateMessage.js"></script>
+<script type="text/javascript" src="/nm/gpii-handlebars/src/js/client/templateFormControl.js"></script>
+
 <!-- User Management Dependencies -->
-<script type="text/javascript" src="/nm/gpii-express-user/src/js/client/canHandleStrings.js"></script>
-<script type="text/javascript" src="/nm/gpii-express-user/src/js/client/controls.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/canHandleStrings.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/controls.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/forgot.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/login.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/passwordCheckingForm.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/reset.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/signup.js"></script>
+<script type="text/javascript" src="/nm/gpii-express-user/src//js/client/resend.js"></script>
+
 <link rel="stylesheet" href="/nm/gpii-express-user/src/css/user-controls.css"/>
 <link rel="stylesheet" href="/nm/gpii-express-user/src/css/user-icons.css"/>
 
 <!-- Add ligature support to older browsers -->
-<script src="/src/js/liga.js"></script>
+<script src="/src/js/client/liga.js"></script>
 
 <!-- include foundation and its dependencies -->
 <script src="/bc/foundation/js/foundation/foundation.js"></script>

@@ -20,8 +20,8 @@ require("gpii-pouchdb-lucene");
 require("../../../../index.js");
 
 var viewDirs  = [
-    path.resolve(__dirname, "../../../src/templates"),
-    path.resolve(__dirname, "../../../node_modules/gpii-express-user/src/templates")
+    path.resolve(__dirname, "../../../../src/templates"),
+    path.resolve(__dirname, "../../../../node_modules/gpii-express-user/src/templates")
 ];
 
 var recordData = path.resolve(__dirname, "../../../data/pouchdb/records.json");
@@ -169,6 +169,12 @@ fluid.defaults("gpii.ptd.api.tests.harness", {
                         options: {
                             path:    "/src",
                             content: srcDir
+                        }
+                    },
+                    inline: {
+                        type: "gpii.express.hb.inline",
+                        options: {
+                            path: "/hbs"
                         }
                     },
                     handlebars: {

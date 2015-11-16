@@ -12,11 +12,11 @@ fluid.registerNamespace("gpii.ptd.api.search");
 
 // Bring in our helper components
 require("gpii-express");
-require("../lib/sorting/index");
-require("../lib/filters/index");
-require("../lib/paging/index");
-require("../lib/children/index");
-require("../lib/params/index");
+require("../lib/sorting");
+require("../lib/filters");
+require("../lib/paging");
+require("../lib/children");
+require("../lib/params");
 
 var request = require("request");
 

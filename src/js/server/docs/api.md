@@ -134,8 +134,9 @@ Creates a new record.  If an author is supplied, gives them credit, otherwise th
         }
         ```
 
-## PUT /api/record
-Update an existing record.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Partial records are allowed, but at a minimum you must provide a uniqueId and at least one other field.  If a partial record is submitted, only the supplied fields will be updated.  To clear the value for a field, you must explicitly pass "null" as the value.  Returns the updated record.
+## PUT /api/record/{uniqueId}
+
+Update the record whose unique ID is equal to the value of `uniqueId`.  If a record does not exist, one will be created.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.  Partial records are allowed, but at a minimum you must provide a uniqueId and at least one other field.  If a partial record is submitted, only the supplied fields will be updated.  To clear the value for a field, you must explicitly pass "null" as the value.  Returns the updated record.
 
 + Request (application/json}
 
@@ -170,7 +171,7 @@ Update an existing record.  If an author is supplied, gives them credit, otherwi
         ```
 
 ## DELETE /api/record/{uniqueId}
-Flags a record as deleted.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.
+Flags the record whose unique ID is equal to the value of `uniqueId` as deleted.  If an author is supplied, gives them credit, otherwise the current user is listed as the author.
 
 + Parameters
     + uniqueId (required, string) ... The unique identifier of a single record.
