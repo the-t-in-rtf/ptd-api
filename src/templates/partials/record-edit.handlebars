@@ -1,0 +1,24 @@
+<div class="success"></div>
+<div class="error"></div>
+
+<form name="details-form">
+    <div class="details-header">
+        {{>record-controls-linkbar}}
+        {{>record-edit-uniqueid}}
+    </div>
+
+    <div class="details-body">
+        {{#equals originalRecord.type "alias"}}
+            {{>record-alias-edit}}
+        {{else}}
+            {{#equals record.type "translation"}}
+                {{>record-translation-edit}}
+            {{else}}
+                {{>record-term-edit}}
+            {{/equals}}
+        {{/equals}}
+    </div>
+
+    {{>record-controls-edit}}
+</form>
+

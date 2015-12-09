@@ -1,0 +1,19 @@
+{
+  "records": [
+    {
+      "uniqueId":   "foo",
+      "termLabel":  "Foo",
+      "definition": "This is the definition for the 'foo' element."
+    },
+    {
+      "uniqueId":   "bar",
+      "termLabel":  "Bar",
+      "definition": "This is the definition for the 'bar' element."
+    },
+    {
+      "uniqueId":   "baz",
+      "termLabel":  "Baz",
+      "definition": "This is the definition for the 'baz' element."
+    }
+  ]
+}

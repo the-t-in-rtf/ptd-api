@@ -4,7 +4,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./lib");
+require("../lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -122,7 +122,7 @@ gpii.ptd.api.search.tests.caseHolder.verifySecondQualifiedResponse = function (e
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.search.tests.caseHolder", {
-    gradeNames:  ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames: ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     rawModules: [
         {
             tests: [
@@ -326,12 +326,12 @@ fluid.defaults("gpii.ptd.api.search.tests.caseHolder", {
     }
 });
 
-gpii.ptd.api.tests.testEnvironment({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9786,
-        couch:  6987,
-        lucene: 8686,
-        mail:   7925
+        express: 9776,
+        couch:   6977,
+        lucene:  8676,
+        mail:    7325
     },
     components: {
         testCaseHolder: {

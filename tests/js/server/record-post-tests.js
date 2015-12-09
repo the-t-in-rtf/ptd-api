@@ -8,7 +8,7 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ctr.record.tests.post");
 
-require("./lib");
+require("../lib");
 
 // TODO:  When we add support for versions, we should disable it for these tests and test the version code separately
 
@@ -28,7 +28,7 @@ fluid.defaults("gpii.ptd.api.tests.record.post.request.login", {
 });
 
 fluid.defaults("gpii.ptd.api.record.post.tests.caseHolder", {
-    gradeNames:  ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames: ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     userDetails: { username: "admin", password: "admin"},
     records: {
         valid:   {
@@ -142,7 +142,7 @@ fluid.defaults("gpii.ptd.api.record.post.tests.caseHolder", {
                             listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
                             event: "{invalidPostRequest}.events.onComplete",
                             // environment, error, response, body, statusCode, expected, notExpected
-                            args: ["{testEnvironment}", null, "{invalidPostRequest}.nativeResponse", "{arguments}.0", 400, { ok: false, fieldErrors: { "status": ["The review status of this record."], "updated": ["The date at which the record was last updated."]} }]
+                            args: ["{testEnvironment}", null, "{invalidPostRequest}.nativeResponse", "{arguments}.0", 400, { ok: false, fieldErrors: { "status": ["The review status of this record must be unreviewed, candidate, active, draft, or deleted."]} }]
                         }
                     ]
                 }
@@ -177,12 +177,12 @@ fluid.defaults("gpii.ptd.api.record.post.tests.caseHolder", {
     }
 });
 
-gpii.ptd.api.tests.testEnvironment.loadsViewsOnStartup({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9686,
-        couch:  6787,
-        lucene: 6363,
-        mail:   7725
+        express: 9687,
+        couch:   6788,
+        lucene:  6364,
+        mail:    8125
     },
     components: {
         testCaseHolder: {

@@ -71,11 +71,7 @@ button.radius, .button.radius {
 }
 
 .ptd-header-item-to-pad {
-    padding-top: 1.5em;
-}
-
-.ptd-user-container {
-    padding-top: .5em;
+    padding-top: 1em;
 }
 
 .ptd-header [class^="ptd-icon-"], .ptd-header [class*=" ptd-icon-"] {

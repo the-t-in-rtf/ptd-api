@@ -1,0 +1,9 @@
+{{#if query}}
+    <ul class="picker-suggestions" name="suggestion" tabindex="0">
+        {{#each suggestions}}
+            <li class="picker-suggestion" position="{{@index}}" value="{{jsonify .}}">{{uniqueId}}:<span class="picker-suggestion-definition">{{definition}}</span></li>
+        {{else}}
+            <li class="picker-no-suggestions">No suggestions available for your search terms.  Please try again.</li>
+        {{/each}}
+    </ul>
+{{/if}}

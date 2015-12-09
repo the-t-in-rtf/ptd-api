@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Test for "toggle" component....</title>
+
+        <script type="text/javascript" src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/lib/fastXmlPull/js/fastXmlPull.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/renderer/js/fluidParser.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/renderer/js/fluidRenderer.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidRequests.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <script src="../../src/js/client/toggle.js"></script>
+        <script src="./js/toggle.js"></script>
+    </head>
+    <body>
+        <h2>Test controls for the "toggle" component.</h2>
+
+        <ul>
+            <li><a class="toggle">Toggle using a link.</a></li>
+            <li><span class="toggle">Toggle using a span.</span></li>
+            <li><div class="toggle">Toggle using a div.</div></li>
+            <li><button class="toggle">Toggle using a button element.</button></li>
+            <li>
+                <form action="noop.html">
+                    <input type="button" class="toggle" value="Toggle using a form button"/>
+                </form>
+            </li>
+        </ul>
+
+        <hr/>
+
+        <div class="toToggle">
+            <p>`You'll see me there,' said the Cat, and vanished.</p>
+
+            <p>Alice was not much surprised at this, she was getting so used to queer things happening. While she was looking at the place where it had been, it suddenly appeared again.</p>
+
+            <p>`By-the-bye, what became of the baby?' said the Cat. `I'd nearly forgotten to ask.'</p>
+
+            <p>`It turned into a pig,' Alice quietly said, just as if it had come back in a natural way.</p>
+
+            <p>`I thought it would,' said the Cat, and vanished again.</p>
+
+            <p>Alice waited a little, half expecting to see it again, but it did not appear, and after a minute or two she walked on in the direction in which the March Hare was said to live. `I've seen hatters before,' she said to herself; `the March Hare will be much the most interesting, and perhaps as this is May it won't be raving mad--at least not so mad as it was in March.' As she said this, she looked up, and there was the Cat again, sitting on a branch of a tree.</p>
+
+            <p>`Did you say pig, or fig?' said the Cat.</p>
+
+            <p>`I said pig,' replied Alice; `and I wish you wouldn't keep appearing and vanishing so suddenly: you make one quite giddy.'</p>
+
+            <p>`All right,' said the Cat; and this time it vanished quite slowly, beginning with the end of the tail, and ending with the grin, which remained some time after the rest of it had gone.</p>
+        </div>
+    
+        <script type="text/javascript">
+            var component = gpii.ul.api.frontend.tests.toggle("body");
+        </script>
+    </body>
+</html>

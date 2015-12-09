@@ -14,9 +14,9 @@
     "url": "https://github.com/GPII/ptd-api"
   },
   "dependencies": {
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#dab5e13894e8b98b91facc71b37e56180af867ef",
-    "gpii-express-user": "git://github.com/the-t-in-rtf/gpii-express-user.git#f896b9f585c57e9b016c88754f044f0ff1f193dc",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#791b23adf0e367f9fc124d8cd967b0551fd6c08f",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#23c741948502885d4a702b605c343ce100e54ed7",
+    "gpii-express-user": "git://github.com/the-t-in-rtf/gpii-express-user.git#bf970c3fdd3910eab62458f89462b7b527022815",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#e971073dddab21d1e545f0e121a64718e1a8f21d",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#c321910a3ec2b9792996aeef9e64cc0cfd620afb",
     "grunt": "~0.4.4",
     "grunt-shell": "0.6.4",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#3459227b8af02340f1d2d0d8aba64611ed3620bc",
+    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser.git#82a5a0296657c73d63a6207501199660def99ba2",
     "gpii-pouchdb": "git://github.com/the-t-in-rtf/gpii-pouchdb.git#99176f16046ba7726a2578c61cd88960b6d6390e",
     "gpii-pouchdb-lucene": "git://github.com/the-t-in-rtf/gpii-pouchdb-lucene.git#6986331277f1f85d1efb05a191b9e01c38a74222",
     "kettle": "git://github.com/amb26/kettle.git#c7207e93518b3c61cb6e923f22b1e26f2c365f64",

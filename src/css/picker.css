@@ -1,0 +1,41 @@
+.picker-suggestions {
+    position:         relative;
+    background-color: white;
+    padding:          .5em;
+    margin-left:      0em;
+    border:           1px solid #cccccc;
+    border-top:       none;
+    z-index:          999;
+    list-style-type:  none;
+}
+
+.picker-suggestions li {
+    padding:        .25em;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+    overflow:      hidden;
+}
+
+.picker-suggestion-selected {
+    background-color: #ccccff;
+}
+
+.picker-suggestion-definition {
+    margin-left: .5em;
+    font-style:  italic;
+    color: #999999;
+}
+
+.picker-no-suggestions {
+    font-style:  italic;
+    color: #999999;
+}
+
+.picker-picked {
+    margin-top: .5em;
+    margin-left: .6em;
+}
+
+input.picker-search-query {
+    margin-bottom: 0px;
+}

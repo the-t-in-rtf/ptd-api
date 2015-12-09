@@ -2,7 +2,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./lib");
+require("../lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -341,7 +341,7 @@ gpii.ptd.api.records.tests.caseHolder.verifySecondStatusLimitedResponse = functi
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
-    gradeNames: ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames: ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     rawModules: [
         {
             tests: [
@@ -722,12 +722,12 @@ fluid.defaults("gpii.ptd.api.records.tests.caseHolder", {
     }
 });
 
-gpii.ptd.api.tests.testEnvironment({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9786,
-        couch:  6987,
-        lucene: 6868,
-        mail:   7925
+        express: 9786,
+        couch:   6987,
+        lucene:  6868,
+        mail:    7925
     },
     components: {
         testCaseHolder: {

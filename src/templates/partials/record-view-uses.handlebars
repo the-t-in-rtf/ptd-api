@@ -1,0 +1,10 @@
+{{#if record.uses}}
+    <div class="column small-12">
+        <div class="details-heading">Uses</div>
+        <ul>
+            {{#each record.uses}}
+                <li>{{.}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

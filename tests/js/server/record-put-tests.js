@@ -11,7 +11,7 @@ var gpii  = fluid.registerNamespace("gpii");
 
 // TODO:  When we add support for attribution, we should test it
 
-require("./lib");
+require("../lib");
 
 fluid.defaults("gpii.ptd.api.tests.record.put.request", {
     gradeNames: ["gpii.ptd.api.tests.request"],
@@ -27,40 +27,36 @@ fluid.defaults("gpii.ptd.api.tests.record.put.request.login", {
 });
 
 fluid.defaults("gpii.ptd.api.record.put.tests.caseHolder", {
-    gradeNames:  ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames:  ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     userDetails: { username: "admin", password: "admin"},
     records: {
-        existing: {
-            "uniqueId":   "validRecord",
-            "type":       "alias",
-            "aliasOf":    "parent",
-            "status":     "active",
-            "updated":    "2014-05-22T10:01:33.655Z",
-            "termLabel":  "A test term",
-            "definition": "This is a sample term created for test purposes."
+        validExisting: {
+            uniqueId:   "AbsolutePointing",
+            type:       "alias",
+            aliasOf:    "parent",
+            status:     "active",
+            termLabel:  "A test term",
+            definition: "This is a sample term created for test purposes."
         },
-        "new": {
-            "uniqueId":   "validRecord",
-            "type":       "alias",
-            "aliasOf":    "parent",
-            "status":     "active",
-            "updated":    "2014-05-22T10:01:33.655Z",
-            "termLabel":  "A test term",
-            "definition": "This is a sample term created for test purposes."
+        validNew: {
+            uniqueId:   "validNew",
+            type:       "alias",
+            aliasOf:    "parent",
+            status:     "active",
+            termLabel:  "A test term",
+            definition: "This is a sample term created for test purposes."
         },
-        invalid: {
-            "uniqueId": " invalidRecord",
-            "type":       "alias",
-            "termLabel":  "A test alias with missing data.",
-            "definition": "This record is missing an aliasOf field."
+        invalidNew: {
+            uniqueId:   "invalidNew",
+            type:       "alias",
+            termLabel:  "A test alias with missing data.",
+            definition: "This record is missing an aliasOf field."
         },
-        duplicate: {
-            "uniqueId":   "6DotComputerBrailleTable",
-            "updated":    "2014-05-22T10:01:33.655Z",
-            "status":     "active",
-            "type":       "term",
-            "termLabel":  "This part doesn't matter, as the uniqueId is already in use.",
-            "definition": "This part also doesn't matter."
+        invalidExisting: {
+            uniqueId:   "AbsolutePointing",
+            type:       "alias",
+            termLabel:  "A test alias with missing data.",
+            definition: "This record is missing an aliasOf field."
         }
     },
     rawModules: [
@@ -72,7 +68,7 @@ fluid.defaults("gpii.ptd.api.record.put.tests.caseHolder", {
                     sequence: [
                         {
                             func: "{anonymousPutRequest}.send",
-                            args: ["{that}.options.records.existing"]
+                            args: ["{that}.options.records.validExisting"]
                         },
                         {
                             listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
@@ -83,74 +79,98 @@ fluid.defaults("gpii.ptd.api.record.put.tests.caseHolder", {
                     ]
                 },
                 {
-                    name: "Try to create a new record while logged in...",
+                    name: "Try to create a valid new record while logged in...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{loginRequest}.send",
+                            func: "{validNewLoginRequest}.send",
                             args: ["{that}.options.userDetails"]
                         },
                         {
                             listener: "fluid.identity",
-                            event:    "{loginRequest}.events.onComplete"
+                            event:    "{validNewLoginRequest}.events.onComplete"
                         },
                         {
-                            func: "{loggedInPutRequest}.send",
-                            args: ["{that}.options.records.new"]
+                            func: "{validNewPutRequest}.send",
+                            args: ["{that}.options.records.validNew"]
                         },
                         {
                             listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
-                            event: "{loggedInPutRequest}.events.onComplete",
+                            event: "{validNewPutRequest}.events.onComplete",
                             // environment, error, response, body, statusCode, expected, notExpected
-                            args: ["{testEnvironment}", null, "{loggedInPutRequest}.nativeResponse", "{arguments}.0", 201, { ok: true }]
+                            args: ["{testEnvironment}", null, "{validNewPutRequest}.nativeResponse", "{arguments}.0", 201, { ok: true }]
                         }
                     ]
                 },
                 {
-                    name: "Try to update an existing record while logged in...",
+                    name: "Try to update an valid existing record while logged in...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{loginRequest}.send",
+                            func: "{validExistingLoginRequest}.send",
                             args: ["{that}.options.userDetails"]
                         },
                         {
                             listener: "fluid.identity",
-                            event:    "{loginRequest}.events.onComplete"
+                            event:    "{validExistingLoginRequest}.events.onComplete"
                         },
                         {
-                            func: "{loggedInPutRequest}.send",
-                            args: ["{that}.options.records.valid"]
+                            func: "{validExistingPutRequest}.send",
+                            args: ["{that}.options.records.validExisting"]
                         },
                         {
                             listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
-                            event: "{loggedInPutRequest}.events.onComplete",
+                            event: "{validExistingPutRequest}.events.onComplete",
                             // environment, error, response, body, statusCode, expected, notExpected
-                            args: ["{testEnvironment}", null, "{loggedInPutRequest}.nativeResponse", "{arguments}.0", 201, { ok: true }]
+                            args: ["{testEnvironment}", null, "{validExistingPutRequest}.nativeResponse", "{arguments}.0", 201, { ok: true }]
                         }
                     ]
                 },
                 {
-                    name: "Try to PUT an invalid record while logged in...",
+                    name: "Try to PUT an invalid new record while logged in...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{invalidLoginRequest}.send",
+                            func: "{invalidNewLoginRequest}.send",
                             args: ["{that}.options.userDetails"]
                         },
                         {
                             listener: "fluid.identity",
-                            event:    "{invalidLoginRequest}.events.onComplete"
+                            event:    "{invalidNewLoginRequest}.events.onComplete"
                         },
                         {
-                            func: "{invalidPutRequest}.send",
-                            args: ["{that}.options.records.invalid"]
+                            func: "{invalidNewPutRequest}.send",
+                            args: ["{that}.options.records.invalidNew"]
                         },
                         {
                             listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
-                            event: "{invalidPutRequest}.events.onComplete",
+                            event: "{invalidNewPutRequest}.events.onComplete",
                             // environment, error, response, body, statusCode, expected, notExpected
-                            args: ["{testEnvironment}", null, "{invalidPutRequest}.nativeResponse", "{arguments}.0", 400, { ok: false, fieldErrors: { "status": ["The review status of this record."], "updated": ["The date at which the record was last updated."]} }]
+                            args: ["{testEnvironment}", null, "{invalidNewPutRequest}.nativeResponse", "{arguments}.0", 400, { ok: false, fieldErrors: { status: ["The review status of this record must be unreviewed, candidate, active, draft, or deleted."]} }]
+                        }
+                    ]
+                },
+                {
+                    name: "Try to PUT an invalid existing record while logged in...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{invalidExistingLoginRequest}.send",
+                            args: ["{that}.options.userDetails"]
+                        },
+                        {
+                            listener: "fluid.identity",
+                            event:    "{invalidExistingLoginRequest}.events.onComplete"
+                        },
+                        {
+                            func: "{invalidExistingPutRequest}.send",
+                            args: ["{that}.options.records.invalidExisting"]
+                        },
+                        {
+                            listener: "gpii.ptd.api.tests.testUtils.isExpectedResponse",
+                            event: "{invalidExistingPutRequest}.events.onComplete",
+                            // environment, error, response, body, statusCode, expected, notExpected
+                            args: ["{testEnvironment}", null, "{invalidExistingPutRequest}.nativeResponse", "{arguments}.0", 400, { ok: false, fieldErrors: { status: ["The review status of this record must be unreviewed, candidate, active, draft, or deleted."]} }]
                         }
                     ]
                 }
@@ -164,27 +184,51 @@ fluid.defaults("gpii.ptd.api.record.put.tests.caseHolder", {
         anonymousPutRequest: {
             type: "gpii.ptd.api.tests.record.put.request"
         },
-        loginRequest: {
+        validNewLoginRequest: {
             type: "gpii.ptd.api.tests.record.put.request.login"
         },
-        loggedInPutRequest: {
-            type: "gpii.ptd.api.tests.record.put.request"
+        validNewPutRequest: {
+            type: "gpii.ptd.api.tests.record.put.request",
+            options: {
+                endpoint: "record/validNew"
+            }
         },
-        invalidLoginRequest: {
+        validExistingLoginRequest: {
             type: "gpii.ptd.api.tests.record.put.request.login"
         },
-        invalidPutRequest: {
-            type: "gpii.ptd.api.tests.record.put.request"
+        validExistingPutRequest: {
+            type: "gpii.ptd.api.tests.record.put.request",
+            options: {
+                endpoint: "record/AbsolutePointing"
+            }
+        },
+        invalidNewLoginRequest: {
+            type: "gpii.ptd.api.tests.record.put.request.login"
+        },
+        invalidNewPutRequest: {
+            type: "gpii.ptd.api.tests.record.put.request",
+            options: {
+                endpoint: "record/invalidNew"
+            }
+        },
+        invalidExistingLoginRequest: {
+            type: "gpii.ptd.api.tests.record.put.request.login"
+        },
+        invalidExistingPutRequest: {
+            type: "gpii.ptd.api.tests.record.put.request",
+            options: {
+                endpoint: "record/AbsolutePointing"
+            }
         }
     }
 });
 
-gpii.ptd.api.tests.testEnvironment.loadsViewsOnStartup({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9686,
-        couch:  6787,
-        lucene: 6363,
-        mail:   7725
+        express: 9686,
+        couch:   6787,
+        lucene:  6363,
+        mail:    7725
     },
     components: {
         testCaseHolder: {

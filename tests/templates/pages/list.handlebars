@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Test for "list" component....</title>
+
+        {{>common-includes}}
+        <script src="/testContent/js/list.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <h2>Testing the "list" component</h2>
+
+            <p>This page should be served up by an instance of gpii-express with handlebars and its routers (inline, dispatcher) configured.</p>
+
+            <p>Tab to the input field, type something in, and hit "enter" to add an item.  Use the "trash can" icon next to an existing item to remove it.</p>
+
+            <hr/>
+        </div>
+
+        <div class="row">
+            <h2>Existing List Data</h2>
+
+            <div class="existing-list-viewport"></div>
+        </div>
+
+        <div class="row">
+            <h2>New List Data</h2>
+
+            <div class="new-list-viewport"></div>
+        </div>
+
+        {{{initBlock "gpii.ul.api.frontend.tests.list"}}}
+    </body>
+</html>

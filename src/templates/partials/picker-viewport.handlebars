@@ -1,0 +1,36 @@
+<div class="picker">
+    <div class="row picker-error"></div>
+    <div class="picker-view row collapse">
+        <div class="column medium-1 small-2">
+            <div class="prefix picker-toggle" tabindex="0">
+                <h5>
+                    <span class="ptd-icon-edit" title="Change the parent record.">edit</span>
+                    Edit
+                </h5>
+            </div>
+        </div>
+        <div class="column medium-11 small-10">
+            <div class="picker-picked">
+                {{#if picked}}
+                    {{>picker-picked picked}}
+                {{else}}
+                    No parent record selected...
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="picker-edit row collapse" style="display:none;">
+        <div class="column medium-1 small-2">
+            <div class="prefix picker-toggle" tabindex="0">
+                <h5>
+                    <span class="ptd-icon-cross" title="Cancel and keep the current value."></span>
+                    Cancel
+                </h5>
+            </div>
+        </div>
+        <div class="column medium-11 small-10">
+            <input type="text" class="picker-search-query" name="query" placeholder="Type a uniqueId or other search terms to find a parent record." {{#if picked}}value="{{picked}}" {{/if}}tabindex="0"/>
+            <div class="picker-suggestions-viewport"></div>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./lib");
+require("../lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -48,7 +48,7 @@ gpii.ptd.api.record.get.tests.caseHolder.verifyHasNoChildren = function (environ
 };
 
 fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
-    gradeNames: ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames: ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     rawModules: [
         {
             tests: [
@@ -199,14 +199,12 @@ fluid.defaults("gpii.ptd.api.record.get.tests.caseHolder", {
     }
 });
 
-// Some tests can get away without taking the time to preload views.  These will time out if you don't use the alternate grade.
-//
-gpii.ptd.api.tests.testEnvironment.loadsViewsOnStartup({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9686,
-        couch:  6787,
-        lucene: 6363,
-        mail:   7725
+        express: 9685,
+        couch:   6887,
+        lucene:  6362,
+        mail:    7425
     },
     components: {
         testCaseHolder: {

@@ -9,7 +9,7 @@
         },
         "applicationUniqueFlag": {
             "type": "boolean",
-            "description": "Whether this term is unique to a particular application."
+            "description": "Whether this term is unique to a particular application.  Should be true or false."
         },
         "definition": {
             "type": "string",
@@ -30,11 +30,11 @@
         "ulUri": {
             "type":        "string",
             "format":      "uri",
-            "description": "A URI which can be used to look up this record in the Unified Listing."
+            "description": "Please enter a URI which can be used to look up this record in the Unified Listing."
         },
         "status": {
             "enum": ["unreviewed", "candidate", "active", "draft", "deleted"],
-            "description": "The review status of this record."
+            "description": "The review status of this record must be unreviewed, candidate, active, draft, or deleted."
         },
         "defaultValue": {
             "type": "string",
@@ -59,7 +59,7 @@
         "updated": {
             "type": "string",
             "format": "date-time",
-            "description": "The date at which the record was last updated."
+            "description": "The date at which the record was last updated in ISO 9660 format."
         },
         "uses": {
             "type": "array",
@@ -74,7 +74,8 @@
         },
         "termUniqueIdPattern": {
             "type": "string",
-            "pattern": "^([0-9]+|[a-z]+)([A-Z][a-z]+|[0-9]+|[A-Z]+)*$"
+            "pattern": "^([0-9]+|[a-z]+)([A-Z][a-z]+|[0-9]+|[A-Z]+)*$",
+            "description": "Terms must have unique IDs that appear in lowerCamelCase."
         }
     },
 
@@ -102,5 +103,5 @@
         }
     },
 
-    "required": ["type","uniqueId","status","updated"]
+    "required": ["type","uniqueId","status"]
 }

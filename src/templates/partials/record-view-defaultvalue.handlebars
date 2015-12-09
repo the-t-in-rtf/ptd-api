@@ -1,0 +1,9 @@
+<input type="hidden" name="defaultValue" value="{{record.defaultValue}}"/>
+{{#if record.defaultValue}}
+    <div class="row">
+        <div class="column small-12">
+            <div class="details-heading">Suggested Default Value</div>
+            {{record.defaultValue}}
+        </div>
+    </div>
+{{/if}}

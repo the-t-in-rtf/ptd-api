@@ -7,7 +7,7 @@ fluid.registerNamespace("gpii.ptd.api.tests.childrenTests");
 
 require("../../../src/js/server/lib/children");
 
-require("./lib");
+require("../lib");
 
 var jqUnit = require("node-jqunit");
 
@@ -33,7 +33,7 @@ gpii.ptd.api.tests.childrenTestCaseHolder.confirmHasNoChildren = function (that)
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder"],
+    gradeNames: ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     ports:      "{testEnvironment}.options.ports",
     dbName:     "records",
     testData: {
@@ -167,7 +167,7 @@ fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
         badDbUrl: {
             type: "gpii.ptd.api.lib.children",
             options: {
-                viewPath: "%baseUrlTotally/Bogus/View/"
+                viewPath: "Totally/Bogus/View/"
             }
         },
         badViewPath: {
@@ -188,12 +188,12 @@ fluid.defaults("gpii.ptd.api.tests.children.caseHolder", {
     }
 });
 
-gpii.ptd.api.tests.testEnvironment({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
         api:    9784,
         couch:  6985,
         lucene: 6555,
-        mail:   7725
+        mail:   6725
     },
     components: {
         testCaseHolder: {

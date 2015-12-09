@@ -1,0 +1,9 @@
+<ul>
+    {{#if items}}
+        {{#each items}}
+            <li>{{.}} <span class="ptd-icon- remove-item" position="{{@index}}" tabindex="0">delete</span></li>
+        {{/each}}
+    {{/if}}
+    <li class="add"><input type="text" name="addItem" placeholder="Add item"></li>
+</ul>
+

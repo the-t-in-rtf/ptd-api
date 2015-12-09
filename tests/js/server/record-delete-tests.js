@@ -7,7 +7,7 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./lib");
+require("../lib");
 
 // TODO:  When we add support for attribution, we should test it here as well
 
@@ -24,7 +24,7 @@ fluid.defaults("gpii.ptd.api.tests.record.delete.request.login", {
 });
 
 fluid.defaults("gpii.ptd.api.record.delete.tests.caseHolder", {
-    gradeNames:  ["gpii.ptd.api.tests.caseHolder"],
+    gradeNames:  ["gpii.ptd.api.tests.apiAndBrowser.caseHolder"],
     userDetails: { username: "admin", password: "admin"},
     rawModules: [
         {
@@ -124,12 +124,12 @@ fluid.defaults("gpii.ptd.api.record.delete.tests.caseHolder", {
     }
 });
 
-gpii.ptd.api.tests.testEnvironment.loadsViewsOnStartup({
+gpii.ptd.api.tests.apiAndBrowser.testEnvironment({
     ports: {
-        api:    9686,
-        couch:  6787,
-        lucene: 6363,
-        mail:   7725
+        express: 9685,
+        couch:   6786,
+        lucene:  6362,
+        mail:    7025
     },
     components: {
         testCaseHolder: {

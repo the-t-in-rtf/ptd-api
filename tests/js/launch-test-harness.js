@@ -4,7 +4,7 @@ fluid.setLogging(true);
 
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./server/lib/test-harness.js");
+require("./lib/test-harness");
 
 gpii.ptd.api.tests.harness.loadsViewsOnStartup({
     ports: {
