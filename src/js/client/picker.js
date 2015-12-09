@@ -178,12 +178,15 @@
                     funcName: "fluid.stringTemplate",
                     args:     ["{that}.options.urlTemplate", "{that}.model"]
                 }
+            },
+            headers: {
+                Accept: "application/json"
             }
         },
         rules: {
             successResponseToModel: {
                 "":       "notfound",
-                "picked": "responseJSON"
+                "picked": "responseJSON.records"
             },
             errorResponseToModel: {
                 "":       "notfound",
@@ -215,7 +218,10 @@
         },
         ajaxOptions: {
             success: "{that}.handleGatedSuccess",
-            error:   "{that}.handleGatedError"
+            error:   "{that}.handleGatedError",
+            headers: {
+                Accept: "application/json"
+            }
         },
         templates: {
             initial: "picker-viewport"

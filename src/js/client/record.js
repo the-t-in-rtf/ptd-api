@@ -105,13 +105,17 @@
                     }
                 }
             },
-            picker: {
+            aliasPicker: {
                 type:          "gpii.ptd.api.frontend.picker",
                 createOnEvent: "onMarkupRendered",
                 container:     ".alias-picker-viewport",
                 options: {
+                    urls: {
+                        lookup:      "/api/record/%pickedId",
+                        suggestions: "/api/search"
+                    },
                     model: {
-                        picked: "{that}.model.record.aliasOf"
+                        pickedId: "{gpii.ptd.api.frontend.record.edit}.model.record.aliasOf"
                     }
                 }
             }
@@ -250,20 +254,17 @@
                         viewForm: ".record-view-viewport",
                         toggle:   ".record-toggle"
                     },
-                    events: {
-                        // Our view may be redrawn over and over again, and we have to make sure our bindings work each time.
-                        onRefresh: {
-                            events: {
-                                parentReady: "{record}.events.onChildMarkupRendered"
-                            }
-                        }
-                    },
                     listeners: {
                         "onCreate.applyBindings": {
                             func: "{that}.events.onRefresh.fire"
                         }
                     }
                 }
+            }
+        },
+        listeners: {
+            onChildMarkupRendered: {
+                func: "{that}.toggleControls.events.onRefresh.fire"
             }
         }
     });

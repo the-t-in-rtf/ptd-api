@@ -4,7 +4,7 @@
             <div class="details-heading">Aliases</div>
             <ul>
                 {{#each record.aliases}}
-                    <li><a target="_blank" href="/details/{{uniqueId}}">{{uniqueId}}</a></li>
+                    <li><a target="_blank" href="/api/record/{{uniqueId}}">{{uniqueId}}</a></li>
                 {{/each}}
                 {{#if user}}
                     <li class="details-create-alias"><a target="_blank" href="/details/new?aliasOf={{record.uniqueId}}&type=alias">Create Alias</a></li>
