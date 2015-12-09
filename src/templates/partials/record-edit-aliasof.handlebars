@@ -1,9 +1,15 @@
-<div class="row ptd-link-container">
-    <div class="column small-12">
-        <div class="details-heading">Alias Of</div>
-        <div class="ptd-parent-picker-container">
-            <input type="hidden" name="aliasOf" value="{{record.aliasOf}}"/>
-            <a href="/details/{{record.aliasOf}}" target="_blank">{{record.aliasOf}}</a>
+{{#equals record.type "alias"}}
+    <div class="row ptd-link-container">
+        <div class="column small-12">
+            <div class="details-heading">Alias Of</div>
+            <div class="alias-picker-viewport">
+                {{>picker-viewport}}
+            </div>
         </div>
     </div>
-</div>
+{{else}}
+    <!-- create a "dummy" aliasOf container with the minimum classes that are used in selectors -->
+    <div class="alias-picker-viewport" style="display:none">
+        {{>picker-viewport}}
+    </div>
+{{/equals}}

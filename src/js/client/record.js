@@ -108,10 +108,9 @@
             picker: {
                 type:          "gpii.ptd.api.frontend.picker",
                 createOnEvent: "onMarkupRendered",
-                container:     ".picker-container",
+                container:     ".alias-picker-viewport",
                 options: {
                     model: {
-                        // TODO:  This is sometimes aliasOf, sometimes translationOf.  We need a clean way to associed each with "picked"
                         picked: "{that}.model.record.aliasOf"
                     }
                 }

@@ -2,6 +2,11 @@
 
     Test the "picker" component in isolation from the full API.  Requires the "lightweight" express harness.
 
+    There are two pickers on the test page to confirm that:
+
+    1. It's possible to have multiple pickers at the same time.
+    2. The picker works whether or not it has data when it is created.
+
  */
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
@@ -33,7 +38,7 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onLoaded",
                         listener: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-view"]
+                        args:     [".new-picker-viewport .picker-view"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -42,7 +47,7 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     },
                     {
                         func: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-edit"]
+                        args:     [".new-picker-viewport .picker-edit"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -61,12 +66,12 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onLoaded",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".ptd-icon-edit"]
+                        args:     [".new-picker-viewport .ptd-icon-edit"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-view"]
+                        args:     [".new-picker-viewport .picker-view"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -75,7 +80,7 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     },
                     {
                         func: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-edit"]
+                        args:     [".new-picker-viewport .picker-edit"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -94,17 +99,17 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onGotoComplete",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".ptd-icon-edit"]
+                        args:     [".new-picker-viewport .ptd-icon-edit"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".ptd-icon-cross"]
+                        args:     [".new-picker-viewport .ptd-icon-cross"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-view"]
+                        args:     [".new-picker-viewport .picker-view"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -113,7 +118,7 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     },
                     {
                         func: "{testEnvironment}.harness.browser.visible",
-                        args:     [".picker-edit"]
+                        args:     [".new-picker-viewport .picker-edit"]
                     },
                     {
                         event:     "{testEnvironment}.harness.browser.events.onVisibleComplete",
@@ -132,12 +137,12 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onGotoComplete",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".ptd-icon-edit"]
+                        args:     [".new-picker-viewport .ptd-icon-edit"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.type",
-                        args:     [".picker-search-query", "test"]
+                        args:     [".new-picker-viewport .picker-search-query", "test"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onTypeComplete",
@@ -166,12 +171,12 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onGotoComplete",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".ptd-icon-edit"]
+                        args:     [".new-picker-viewport .ptd-icon-edit"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.type",
-                        args:     [".picker-search-query", "test"]
+                        args:     [".new-picker-viewport .picker-search-query", "test"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onTypeComplete",
@@ -181,12 +186,36 @@ fluid.defaults("gpii.ul.api.frontend.tests.picker", {
                     {
                         event:    "{testEnvironment}.harness.browser.events.onWaitComplete",
                         listener: "{testEnvironment}.harness.browser.click",
-                        args:     [".picker-suggestion[position='1']"]
+                        args:     [".new-picker-viewport .picker-suggestion[position='1']"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onClickComplete",
                         listener: "{testEnvironment}.harness.browser.evaluate",
-                        args:     [gpii.tests.browser.tests.lookupFunction, ".picker-picked", "innerText"]
+                        args:     [gpii.tests.browser.tests.lookupFunction, ".new-picker-viewport .picker-picked", "innerText"]
+                    },
+                    {
+                        event:    "{testEnvironment}.harness.browser.events.onEvaluateComplete",
+                        listener: "jqUnit.assertEquals",
+                        args:     ["The picked suggestion should be correct...", "Bar", "{arguments}.0"]
+                    }
+                ]
+            },
+            {
+                name: "A picker created with existing data should display its data...",
+                sequence: [
+                    {
+                        func: "{testEnvironment}.harness.browser.goto",
+                        args: ["{that}.options.testUrl"]
+                    },
+                    {
+                        event:    "{testEnvironment}.harness.browser.events.onLoaded",
+                        listener: "{testEnvironment}.harness.browser.wait",
+                        args:     [ 250 ]
+                    },
+                    {
+                        event:    "{testEnvironment}.harness.browser.events.onWaitComplete",
+                        listener: "{testEnvironment}.harness.browser.evaluate",
+                        args:     [gpii.tests.browser.tests.lookupFunction, ".existing-picker-viewport .picker-picked", "innerText"]
                     },
                     {
                         event:    "{testEnvironment}.harness.browser.events.onEvaluateComplete",

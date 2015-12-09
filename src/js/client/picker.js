@@ -19,11 +19,11 @@
 
     // Update the current value with the "picked" suggestion and toggle the controls / value display
     gpii.ptd.api.frontend.picker.suggestions.pickParent = function (that, event) {
-        var element = $(event.currentTarget);
-        var value   = JSON.parse(element.attr("value"));
-
-        that.applier.change("picked", value);
-        that.applier.change("suggestions", []);
+        var element   = $(event.currentTarget);
+        var value     = JSON.parse(element.attr("value"));
+        var changeSet = fluid.model.transformWithRules(value, that.options.rules.pickedToModel);
+        // Reuse the "batch change" mechanism from `ajaxCapable`.
+        gpii.templates.ajaxCapable.batchChanges(that, changeSet);
     };
 
     gpii.ptd.api.frontend.picker.suggestions.navigateWithinSuggestions = function (that, event) {
@@ -70,9 +70,16 @@
     fluid.defaults("gpii.ptd.api.frontend.picker.suggestions", {
         gradeNames: ["gpii.templates.templateMessage"],
         template:   "picker-suggestions",
+        rules: {
+            pickedToModel: {
+                pickedId:    "uniqueId",
+                picked:      ""
+            }
+        },
         model: {
             suggestions: [],
-            picked:      null
+            picked:      null,
+            pickedId:    null
         },
         selectors: {
             suggestion:         ".picker-suggestion",
@@ -150,11 +157,62 @@
         fn.apply(that, args);
     };
 
-    // TODO:  Reintroduce polling (but gated this time) to pick up changes as you type.
+    // A record "looker upper" that looks up the full "picked" record when the "pickedId" changes.
+    // to avoid double-polling, this only fires if `that.model.picked` is null.
+    fluid.registerNamespace("gpii.ptd.api.frontend.picker.recordLookerUpper");
+    gpii.ptd.api.frontend.picker.recordLookerUpper.lookupRecord = function (that) {
+        if (that.model.pickedId && !that.model.picked) {
+            that.makeRequest();
+        }
+    };
 
+    fluid.defaults("gpii.ptd.api.frontend.picker.recordLookerUpper", {
+        gradeNames: ["gpii.templates.ajaxCapable"],
+        model: {
+            picked:   null,
+            pickedId: null
+        },
+        ajaxOptions: {
+            url: {
+                expander: {
+                    funcName: "fluid.stringTemplate",
+                    args:     ["{that}.options.urlTemplate", "{that}.model"]
+                }
+            }
+        },
+        rules: {
+            successResponseToModel: {
+                "":       "notfound",
+                "picked": "responseJSON"
+            },
+            errorResponseToModel: {
+                "":       "notfound",
+                "picked": { literalValue: null}
+            }
+        },
+        modelListeners: {
+            pickedId: {
+                funcName:      "gpii.ptd.api.frontend.picker.recordLookerUpper.lookupRecord",
+                excludeSource: "init",
+                args:          ["{that}"]
+            }
+        },
+        listeners: {
+            "onCreate.lookupRecord": {
+                funcName: "gpii.ptd.api.frontend.picker.recordLookerUpper.lookupRecord",
+                args:     ["{that}"]
+            }
+        }
+    });
+
+    // The main "picker" queries the "suggestions" URL and updates the model.  There is a child component that
+    // handles the initial lookup of the "picked" record if it exists.
     fluid.defaults("gpii.ptd.api.frontend.picker", {
         gradeNames: ["gpii.templates.ajaxCapable", "gpii.templates.templateAware"],
-        baseUrl:    "/api/search",
+        urls: {
+            suggestions: "/api/search",
+            lookup:      "/api/record/%pickedId"
+        },
         ajaxOptions: {
             success: "{that}.handleGatedSuccess",
             error:   "{that}.handleGatedError"
@@ -164,12 +222,12 @@
         },
         rules: {
             successResponseToModel: {
-                "": "notfound",
+                "":           "notfound",
                 errorMessage: { literalValue: null},
                 suggestions:  "responseJSON.records"
             },
             errorResponseToModel: {
-                "": "notfound",
+                "":           "notfound",
                 errorMessage: { literalValue: "Error looking up suggestions." },
                 suggestions:  { literalValue: []}
             },
@@ -179,7 +237,7 @@
                 q:     "query"
             },
             ajaxOptions: {
-                url: { literalValue: "{that}.options.baseUrl"}
+                url: { literalValue: "{that}.options.urls.suggestions"}
             }
         },
         members: {
@@ -187,14 +245,16 @@
             polling:         null
         },
         model: {
-            picked:      null,
-            suggestions: [],
-            query:       null
+            picked:   null,
+            pickedId: null,
+            query:    null
         },
         selectors: {
-            initial:            ".picker-viewport",
-            toggle:             ".picker-toggle",
-            query:              ".picker-search-query"
+            error:       ".picker-error",
+            initial:     "{that}.options.container",
+            query:       ".picker-search-query",
+            suggestions: ".picker-suggestions-viewport",
+            toggle:      ".picker-toggle"
         },
         invokers: {
             handleGatedError: {
@@ -270,7 +330,7 @@
             errorMessage: {
                 type:          "gpii.templates.templateMessage",
                 createOnEvent: "onMarkupRendered",
-                container:     ".picker-error",
+                container:     "{gpii.ptd.api.frontend.picker}.dom.error",
                 options: {
                     template: "common-error",
                     model: {
@@ -281,12 +341,23 @@
             suggestions: {
                 type:          "gpii.ptd.api.frontend.picker.suggestions",
                 createOnEvent: "onMarkupRendered",
-                container:      ".picker-suggestions-viewport",
+                container:     "{gpii.ptd.api.frontend.picker}.dom.suggestions",
                 options: {
                     model: {
                         suggestions: "{gpii.ptd.api.frontend.picker}.model.suggestions",
+                        pickedId:    "{gpii.ptd.api.frontend.picker}.model.pickedId",
                         picked:      "{gpii.ptd.api.frontend.picker}.model.picked",
                         query:       "{gpii.ptd.api.frontend.picker}.model.query"
+                    }
+                }
+            },
+            recordLookerUpper: {
+                type: "gpii.ptd.api.frontend.picker.recordLookerUpper",
+                options: {
+                    urlTemplate: "{gpii.ptd.api.frontend.picker}.options.urls.lookup",
+                    model: {
+                        pickedId: "{gpii.ptd.api.frontend.picker}.model.pickedId",
+                        picked:   "{gpii.ptd.api.frontend.picker}.model.picked"
                     }
                 }
             }
