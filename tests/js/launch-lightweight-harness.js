@@ -6,7 +6,7 @@ var gpii  = fluid.registerNamespace("gpii");
 
 require("./lib/test-harness.js");
 
-gpii.ptd.api.tests.harness({
+gpii.ptd.api.tests.harness.api({
     ports: {
         express: 4985
     }

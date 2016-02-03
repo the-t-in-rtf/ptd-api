@@ -16,12 +16,15 @@ require("gpii-test-browser");
 
 require("../../../index.js");
 
+require("gpii-pouch");
+require("gpii-pouchdb-lucene");
+
 require("./test-express");
 require("./test-pouch");
 
 var schemaDir      = path.resolve(__dirname, "../../../src/schemas");
 
-// The base harness launches express with no API.
+// The base harness launches express with no API or browser.
 fluid.defaults("gpii.ptd.api.tests.harness", {
     gradeNames: ["fluid.component"],
     ports: {
@@ -29,11 +32,9 @@ fluid.defaults("gpii.ptd.api.tests.harness", {
     },
     events: {
         onExpressReady: null,
-        onBrowserReady: null,
         onHarnessReady: {
             events: {
-                onExpressReady: "onExpressReady",
-                onBrowserReady: "onBrowserReady"
+                onExpressReady: "onExpressReady"
             }
         }
     },
@@ -48,7 +49,20 @@ fluid.defaults("gpii.ptd.api.tests.harness", {
                     }
                 }
             }
-        },
+        }
+    },
+    listeners: {
+        "onHarnessReady.log": { funcName: "fluid.log", args: ["Test harness ready..."]}
+    }
+});
+
+// A mix-in grade to add a test browser.
+fluid.defaults("gpii.ptd.api.tests.harness.hasBrowser", {
+    gradeNames: ["fluid.component"],
+    events: {
+        onBrowserReady: null
+    },
+    components: {
         browser: {
             type: "gpii.tests.browser",
             options: {
@@ -61,13 +75,11 @@ fluid.defaults("gpii.ptd.api.tests.harness", {
                 }
             }
         }
-    },
-    listeners: {
-        "onHarnessReady.log": { funcName: "fluid.log", args: ["Test harness ready..."]}
     }
 });
 
-fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
+// The base plus just express and the API
+fluid.defaults("gpii.ptd.api.tests.harness.api", {
     gradeNames: ["gpii.ptd.api.tests.harness"],
     ports: {
         express: "3959",
@@ -105,7 +117,6 @@ fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
         onHarnessReady: {
             events: {
                 onApiReady:     "onApiReady",
-                onBrowserReady: "onBrowserReady",
                 onLuceneReady:  "onLuceneReady",
                 onMailReady:    "onMailReady",
                 onPouchReady:   "onPouchReady"
@@ -116,39 +127,39 @@ fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
         express: {
             type: "gpii.ptd.api.tests.express.api",
             options: {
-                dbName: "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.dbName",
-                ports:  "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.ports",
+                dbName: "{gpii.ptd.api.tests.harness.api}.options.dbName",
+                ports:  "{gpii.ptd.api.tests.harness.api}.options.ports",
                 listeners: {
-                    onStarted: "{gpii.ptd.api.tests.harness.apiAndBrowser}.events.onApiReady.fire"
+                    onStarted: "{gpii.ptd.api.tests.harness.api}.events.onApiReady.fire"
                 }
             }
         },
         pouch: {
             type: "gpii.ptd.api.tests.pouch",
             options: {
-                dbName: "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.dbName",
-                ports:  "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.ports",
+                dbName: "{gpii.ptd.api.tests.harness.api}.options.dbName",
+                ports:  "{gpii.ptd.api.tests.harness.api}.options.ports",
                 listeners: {
-                    onReady: "{gpii.ptd.api.tests.harness.apiAndBrowser}.events.onPouchReady.fire"
+                    onReady: "{gpii.ptd.api.tests.harness.api}.events.onPouchReady.fire"
                 }
             }
         },
         lucene: {
             type: "gpii.pouch.lucene",
             options: {
-                port:  "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.ports.lucene",
+                port:  "{gpii.ptd.api.tests.harness.api}.options.ports.lucene",
                 dbUrl: {
                     expander: {
                         funcName: "fluid.stringTemplate",
-                        args:     ["http://localhost:%port/", { port: "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.ports.couch"}]
+                        args:     ["http://localhost:%port/", { port: "{gpii.ptd.api.tests.harness.api}.options.ports.couch"}]
                     }
                 },
                 listeners: {
                     "onStarted.notifyParent": {
-                        func: "{gpii.ptd.api.tests.harness.apiAndBrowser}.events.onLuceneReady.fire"
+                        func: "{gpii.ptd.api.tests.harness.api}.events.onLuceneReady.fire"
                     },
                     "onShutdownComplete.notifyParent": {
-                        func: "{gpii.ptd.api.tests.harness.apiAndBrowser}.events.onLuceneShutdownComplete.fire"
+                        func: "{gpii.ptd.api.tests.harness.api}.events.onLuceneShutdownComplete.fire"
                     }
                 }
             }
@@ -156,11 +167,11 @@ fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
         mail: {
             type: "gpii.test.mail.smtp",
             options: {
-                port: "{gpii.ptd.api.tests.harness.apiAndBrowser}.options.ports.mail",
+                port: "{gpii.ptd.api.tests.harness.api}.options.ports.mail",
                 listeners: {
                     "onReady": [
                         {
-                            func: "{gpii.ptd.api.tests.harness.apiAndBrowser}.events.onMailReady.fire"
+                            func: "{gpii.ptd.api.tests.harness.api}.events.onMailReady.fire"
                         }
                     ]
                 }
@@ -185,6 +196,23 @@ fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
     }
 });
 
+// The API and a browser instance.
+fluid.defaults("gpii.ptd.api.tests.harness.apiAndBrowser", {
+    gradeNames: ["gpii.ptd.api.tests.harness.api", "gpii.ptd.api.tests.harness.hasBrowser"],
+    events: {
+        onHarnessReady: {
+            events: {
+                onApiReady:     "onApiReady",
+                onBrowserReady: "onBrowserReady",
+                onLuceneReady:  "onLuceneReady",
+                onMailReady:    "onMailReady",
+                onPouchReady:   "onPouchReady"
+            }
+        }
+    }
+});
+
+// The API and a browser, but with a version of pouch that queries its views up front.
 fluid.defaults("gpii.ptd.api.tests.harness.loadsViewsOnStartup", {
     gradeNames: ["gpii.ptd.api.tests.harness.apiAndBrowser"],
     components: {
